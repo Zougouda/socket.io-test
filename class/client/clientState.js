@@ -1,3 +1,5 @@
+const common = require('../common/index.js');
+
 module.exports = class ClientState extends require('../common/state.js')
 {
 	constructor(options = {})
@@ -30,7 +32,7 @@ module.exports = class ClientState extends require('../common/state.js')
 		.on('newPlayer', (data)=>
 		{
 			var {id, obj} = data;
-			this.addPlayer(new Movable(obj), id);
+			this.addPlayer(new common.Movable(obj), id);
 		})
 		.on('removedPlayer', (playerID)=>
 		{

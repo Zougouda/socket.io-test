@@ -6,10 +6,11 @@ module.exports =
     entry: 
     {
         ClientState: './class/client/clientState.js',
-        Movable: './class/common/movable.js',
+        //Movable: './class/common/movable.js',
+		commonClasses: './class/common/index.js'
     },
-    mode: 'production',
-    // mode: 'development',
+    //mode: 'production',
+    mode: 'development',
     target: 'web',
     output: 
     {

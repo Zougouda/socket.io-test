@@ -1,4 +1,5 @@
-const Movable = require('../common/movable.js');
+//const Movable = require('../common/movable.js');
+const common = require('../common/index.js');
 
 module.exports = class ServerState extends require('../common/state.js')
 {
@@ -23,7 +24,7 @@ module.exports = class ServerState extends require('../common/state.js')
 		this.io.on('connection', (socket)=>
 		{
 			var clientID = socket.client.id;
-			var newPlayerData = this.addPlayer(new Movable(), clientID); // {id, json}
+			var newPlayerData = this.addPlayer(new common.Movable(), clientID); // {id, json}
 
 			socket.broadcast.emit('newPlayer', newPlayerData); // send New player to every other client
 			Object.entries(this.players).forEach( ([id, obj])=>
