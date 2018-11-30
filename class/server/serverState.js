@@ -43,6 +43,10 @@ module.exports = class ServerState extends require('../common/state.js')
 			{
 				this.players[data.id].movement[data.axis] = data.value; // TODO never trust user input
 			})
+			.on('setLookPointCoords', (data)=>
+			{
+				this.players[data.id].lookPointCoords = {x: data.x, y: data.y};
+			})
 			;
 		});
 	}
@@ -66,7 +70,10 @@ module.exports = class ServerState extends require('../common/state.js')
 		{
 			return (
 				change.op === 'replace' // Only send replacements patches to all clients
-				&& !change.path.includes('/movement/') // disable movement updates
+				&& (
+					change.path.includes('/x') || change.path.includes('/y') // send X and Y
+					|| change.path.includes('/lookPointCoords') // send look coords
+				)
 			);
 		});
 		setTimeout(()=>

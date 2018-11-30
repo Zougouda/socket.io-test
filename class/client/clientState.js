@@ -54,7 +54,10 @@ module.exports = class ClientState extends require('../common/state.js')
 	{
 		super.addPlayer(...arguments);
 		if(this.isCurrentPlayer(id) )
+		{
 			playerObj.initKeyboardControl();
+			playerObj.initMouseControl(this.canvas);
+		}
 	}
 
 	removePlayer(id)
@@ -69,8 +72,9 @@ module.exports = class ClientState extends require('../common/state.js')
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     	Object.entries(this.players).forEach( ([key, obj])=>
     	{
-			//obj.update(secondsElapsed);
+			// obj.update(secondsElapsed);
 			obj.updateByInterpolation( now );
+			obj.turnToLookPointCoords(secondsElapsed);
     	    obj.draw(this.ctx);
     	});
     	window.requestAnimationFrame(()=>
