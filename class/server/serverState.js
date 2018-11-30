@@ -7,7 +7,8 @@ module.exports = class ServerState extends require('../common/state.js')
 	{
 		super(options);
 
-		this.frequency = 1000 / 60; // 60FPS
+		this.frequency = 1000 / 50; // 50FPS
+		this.latency = 0; // simulate server lag here
 
 		var {io = null} = options;
 		this.io = io;
@@ -51,7 +52,7 @@ module.exports = class ServerState extends require('../common/state.js')
     	Object.entries(this.players).forEach( ([key, obj])=>
     	{
     	    obj.update(modifier);
-    	});
+		});
 		this.notifyClients();
     }
 
@@ -68,7 +69,11 @@ module.exports = class ServerState extends require('../common/state.js')
 				&& !change.path.includes('/movement/') // disable movement updates
 			);
 		});
-		this.io.emit('updatePlayers', changes);
+		setTimeout(()=>
+		{
+			this.io.emit('updatePlayers', changes);
+		}, this.latency);
+		
 	}
 
 	initLoop()

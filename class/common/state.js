@@ -11,8 +11,9 @@ module.exports = class State
 	addPlayer(playerObj, id)
 	{
 		this.players[id] = playerObj;
+		// playerObj.parent = this;
 		playerObj.playerID = id;
-		return {id: id, obj: playerObj};
+		return {id, obj: playerObj};
 	}
 
 	removePlayer(id)

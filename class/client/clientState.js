@@ -65,10 +65,12 @@ module.exports = class ClientState extends require('../common/state.js')
 	tick()
 	{
 		var secondsElapsed = this.getSecondsSinceLastTick();
-    	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		var now = Date.now();
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     	Object.entries(this.players).forEach( ([key, obj])=>
     	{
-			obj.update(secondsElapsed);
+			//obj.update(secondsElapsed);
+			obj.updateByInterpolation( now );
     	    obj.draw(this.ctx);
     	});
     	window.requestAnimationFrame(()=>
@@ -79,27 +81,10 @@ module.exports = class ClientState extends require('../common/state.js')
 
 	handlePatch(changes)
 	{
-		changes = this.excludePatchForCurrentPlayer(changes);
-		this.jsonPatch.applyPatch(this.players, changes);
-	}
-
-	excludePatchForCurrentPlayer(changes)
-	{
-		if(typeof this.updatePlayersIndex === 'undefined')
-			this.updatePlayersIndex = 0;
-
-		/* Only update player attributes based on the server each ~1s */
-		if( this.updatePlayersIndex >= 60 )
-			this.updatePlayersIndex = 0;
-		else
+		Object.entries(this.players).forEach( ([id, obj])=>
 		{
-			changes = changes.filter( (change)=>
-			{
-				var changePlayerID = change.path.split('/')[1];
-				return !this.isCurrentPlayer(changePlayerID);
-			});
-			this.updatePlayersIndex++;		
-		}
-		return changes;
+			obj.storeLastPosition();
+		} );
+		this.jsonPatch.applyPatch(this.players, changes);
 	}
 }

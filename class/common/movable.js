@@ -1,3 +1,5 @@
+const Geometry = require('./geometry.js');
+
 module.exports = class Movable
 {
 	constructor(options = {})
@@ -29,19 +31,20 @@ module.exports = class Movable
 			x: 0,
 			y: 0,
 		};
-		//this.serverUpdatesArray = [];
+
+		this.serverUpdatesArray = [];
 	}
 
-	//storeServerUpdate(change)
-	//{
-	//	this.serverUpdatesArray.push({
-	//		attribute: change.path.attribute,
-	//		value: change.value,
-	//		time: Date.now(),
-	//	});
-	//	if(this.serverUpdatesArray.length > 10)
-	//		this.serverUpdatesArray.shift();
-	//}
+	storeLastPosition()
+	{
+		this.serverUpdatesArray.push({
+			x: this.x,
+			y: this.y,
+			timestamp: Date.now(),
+		})
+		if(this.serverUpdatesArray.length > 2)
+			this.serverUpdatesArray.shift();
+	}
 
 	setAxisMovement(axis, value)
 	{
@@ -62,10 +65,23 @@ module.exports = class Movable
 		this.y += this.movement.y * this.speed * modifier;
 	}
 
+	updateByInterpolation(now = Date.now())
+	{
+		if(this.serverUpdatesArray.length < 2)
+			return;
+		var timeBetweenLastUpdates = this.serverUpdatesArray[1].timestamp - this.serverUpdatesArray[0].timestamp;
+		var timeBetweenNowAndLastUpdate = now -this.serverUpdatesArray[1].timestamp;
+		var modifier = timeBetweenNowAndLastUpdate / timeBetweenLastUpdates;
+		this.drawX = Geometry.lerp(this.serverUpdatesArray[1].x, this.x, modifier);
+		this.drawY = Geometry.lerp(this.serverUpdatesArray[1].y, this.y, modifier);
+	}
+
 	draw(ctx)
 	{
 		ctx.strokeStyle = this.color;
-		ctx.strokeRect(this.x, this.y, this.width, this.height);
+		var drawX = this.drawX || this.x, 
+			drawY = this.drawY || this.y;
+		ctx.strokeRect(drawX, drawY, this.width, this.height);
 	}
 
 	initKeyboardControl()
