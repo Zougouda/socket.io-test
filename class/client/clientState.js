@@ -1,4 +1,4 @@
-const common = require('../common/index.js');
+const commonClasses = require('../common/index.js');
 
 module.exports = class ClientState extends require('../common/state.js')
 {
@@ -32,7 +32,7 @@ module.exports = class ClientState extends require('../common/state.js')
 		.on('newPlayer', (data)=>
 		{
 			var {id, obj} = data;
-			this.addPlayer(new common.Movable(obj), id);
+			this.addPlayer(new commonClasses.Movable(obj), id);
 		})
 		.on('removedPlayer', (playerID)=>
 		{
@@ -52,6 +52,7 @@ module.exports = class ClientState extends require('../common/state.js')
 
 	addPlayer(playerObj, id)
 	{
+		playerObj.clientState = this;
 		super.addPlayer(...arguments);
 		if(this.isCurrentPlayer(id) )
 		{
@@ -60,21 +61,15 @@ module.exports = class ClientState extends require('../common/state.js')
 		}
 	}
 
-	removePlayer(id)
-	{
-		super.removePlayer(...arguments);
-	}
-
 	tick()
 	{
 		var secondsElapsed = this.getSecondsSinceLastTick();
-		var now = Date.now();
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     	Object.entries(this.players).forEach( ([key, obj])=>
     	{
-			// obj.update(secondsElapsed);
-			obj.updateByInterpolation( now );
-			obj.turnToLookPointCoords(secondsElapsed);
+			// obj.updateByInterpolation( this.now );
+			// obj.turnToLookPointCoords(secondsElapsed);
+			obj.updateClient(secondsElapsed)
     	    obj.draw(this.ctx);
     	});
     	window.requestAnimationFrame(()=>

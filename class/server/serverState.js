@@ -41,11 +41,19 @@ module.exports = class ServerState extends require('../common/state.js')
 			})
 			.on('setAxisMovement', (data)=>
 			{
-				this.players[data.id].movement[data.axis] = data.value; // TODO never trust user input
+				try
+				{
+					this.players[data.id].movement[data.axis] = data.value; // TODO never trust user input
+				}
+				catch(e){}
 			})
 			.on('setLookPointCoords', (data)=>
 			{
-				this.players[data.id].lookPointCoords = {x: data.x, y: data.y};
+				try
+				{
+					this.players[data.id].lookPointCoords = {x: data.x, y: data.y};
+				}
+				catch(e){}
 			})
 			;
 		});

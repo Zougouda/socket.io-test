@@ -1,35 +1,28 @@
 const Geometry = require('./geometry.js');
 
-module.exports = class Movable
+module.exports = class Movable extends require('./entity.js')
 {
-	constructor(options = {})
+	get defaultOptions()
 	{
-		var {
-			x = 50, 
-			y = 50, 
-			width = 20, 
-			height = 20,
-			speed = 150, // px/s
-			rotationSpeed = 360, // deg/s
-			lookAngle = 90, // looking straight up : default angle
-			playerID = null,
-			color = null,
-		} = options;
-		Object.assign(this, {
-			x, 
-			y, 
-			width, 
-			height, 
-			speed, 
-			rotationSpeed,
-			lookAngle,
-			playerID, 
-			color
+		return Object.assign(super.defaultOptions, {
+			x: 50,
+			y: 50,
+			width: 42,
+			height: 60,
+			speed: 150, // px/s
+			rotationSpeed: 540, // deg/s
+			lookAngle: 90, // looking straight up : default angle
+			playerID: null,
+			// color: null,
+			spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/ship/spaceship.png',
 		});
+	}
 
-		var colors = ['red', 'blue', 'green', 'purple'];
-		if(!this.color)
-			this.color = colors[ Math.floor(Math.random() * colors.length) ];
+	init()
+	{
+		// var colors = ['red', 'blue', 'green', 'purple'];
+		// if(!this.color)
+		// 	this.color = colors[ Math.floor(Math.random() * colors.length) ];
 
 		this.movement = {
 			x: 0,
@@ -37,7 +30,109 @@ module.exports = class Movable
 		};
 		this.lookPointCoords = {};
 
-		this.serverUpdatesArray = [];
+		/* Client behaviour */
+		if(typeof window !== 'undefined')
+		{
+			this.sprite = new window.Image();
+			if(this.spriteSrc)
+				this.sprite.src = this.spriteSrc
+
+			this.serverUpdatesArray = [];
+		}
+	}
+
+	update(modifier)
+	{
+		this.x += this.movement.x * this.speed * modifier;
+		this.y += this.movement.y * this.speed * modifier;
+		this.turnToLookPointCoords(modifier);
+	}
+
+	updateLookAngle(modifier, angleToReach)
+	{
+		var d = angleToReach - (this.lookAngle % 360);
+		if (d < (-180))
+			d += 360;
+		else if (d > 180)
+			d -= 360;
+		if (d < -this.rotationSpeed * modifier)
+		{
+			this.lookAngle -= this.rotationSpeed * modifier;
+			if (this.lookAngle < 0)
+				this.lookAngle += 360;
+		}
+		else if (d > this.rotationSpeed * modifier)
+		{
+			this.lookAngle += this.rotationSpeed * modifier;
+			if (this.lookAngle > 360)
+				this.lookAngle -= 360;
+		}
+		else
+			this.lookAngle = angleToReach;
+	}
+
+	turnToLookPointCoords(modifier)
+	{
+		if(
+			!this.lookPointCoords.x
+			|| !this.lookPointCoords.y
+			|| !modifier
+		)
+			return;
+
+		var centerX = (this.drawX || this.x) + this.width/2, 
+			centerY = (this.drawY || this.y) + this.height/2;
+		var angleBetweenMeAndMouse = Geometry.getAngleBy2XY(
+			centerX, 
+			centerY, 
+			this.lookPointCoords.x, 
+			this.lookPointCoords.y
+		);
+
+		this.updateLookAngle(modifier, angleBetweenMeAndMouse);
+	}
+
+	/********** CLIENT FUNCTIONS **********/
+
+	rotateContextByLookAngle(ctx)
+	{
+		var centerX = (this.drawX || this.x) + this.width/2, 
+			centerY = (this.drawY || this.y) + this.height/2;
+
+		ctx.save();
+		ctx.translate(centerX, centerY);
+		var rotationRadian = Math.PI / 180 * -(this.lookAngle - 90);
+		ctx.rotate(rotationRadian);
+	}
+
+	draw(ctx)
+	{
+		this.rotateContextByLookAngle(ctx); // rotate ctx ...
+		ctx.drawImage(
+			this.sprite,
+			-this.width/2,
+			-this.height/2,
+			this.width,
+			this.height,
+		);
+		ctx.restore(); // ... and restore it !
+	}
+
+	updateClient(modifier)
+	{
+		this.updateByInterpolation(this.clientState.now);
+		this.turnToLookPointCoords(modifier);
+	}
+
+	updateByInterpolation(now = Date.now())
+	{
+		if(this.serverUpdatesArray.length < 2)
+			return;
+		var timeBetweenLastUpdates = this.serverUpdatesArray[1].timestamp - this.serverUpdatesArray[0].timestamp;
+		var timeBetweenNowAndLastUpdate = now -this.serverUpdatesArray[1].timestamp;
+		var modifier = timeBetweenNowAndLastUpdate / timeBetweenLastUpdates;
+		this.drawX = Geometry.lerp(this.serverUpdatesArray[1].x, this.x, modifier);
+		this.drawY = Geometry.lerp(this.serverUpdatesArray[1].y, this.y, modifier);
 	}
 
 	storeLastPosition()
@@ -54,9 +149,9 @@ module.exports = class Movable
 	setAxisMovement(axis, value)
 	{
 		this.movement[axis] = value;
-		if(typeof clientState !== 'undefined')
+		if(typeof this.clientState !== 'undefined')
 		{
-			clientState.socket.emit('setAxisMovement', {
+			this.clientState.socket.emit('setAxisMovement', {
 				id: this.playerID,
 				axis,
 				value,
@@ -64,50 +159,8 @@ module.exports = class Movable
 		}
 	}
 
-	update(modifier)
-	{
-		this.x += this.movement.x * this.speed * modifier;
-		this.y += this.movement.y * this.speed * modifier;
-		this.turnToLookPointCoords(modifier);
-	}
-
-	updateByInterpolation(now = Date.now())
-	{
-		if(this.serverUpdatesArray.length < 2)
-			return;
-		var timeBetweenLastUpdates = this.serverUpdatesArray[1].timestamp - this.serverUpdatesArray[0].timestamp;
-		var timeBetweenNowAndLastUpdate = now -this.serverUpdatesArray[1].timestamp;
-		var modifier = timeBetweenNowAndLastUpdate / timeBetweenLastUpdates;
-		this.drawX = Geometry.lerp(this.serverUpdatesArray[1].x, this.x, modifier);
-		this.drawY = Geometry.lerp(this.serverUpdatesArray[1].y, this.y, modifier);
-	}
-
-	draw(ctx)
-	{
-		ctx.strokeStyle = this.color;
-		var centerX = (this.drawX || this.x) + this.width/2, 
-			centerY = (this.drawY || this.y) + this.height/2;
-
-		/* rotate ctx ... */
-		ctx.save();
-		ctx.translate(centerX, centerY);
-		var rotationRadian = Math.PI / 180 * -(this.lookAngle - 90);
-		ctx.rotate(rotationRadian);
-
-		ctx.strokeRect(
-			-this.width/2,
-			-this.height/2,
-			this.width, 
-			this.height
-		);
-
-		ctx.restore(); // ... and restore it !
-
-	}
-
 	initKeyboardControl()
 	{
-		
 		window.addEventListener("keydown", (e)=>
 		{
 			/* Cancel default behaviour */
@@ -189,53 +242,14 @@ module.exports = class Movable
 			this.lookPointCoords.x = x;
 			this.lookPointCoords.y = y;
 			
-			if(typeof clientState !== 'undefined')
+			if(typeof this.clientState !== 'undefined')
 			{
-				clientState.socket.emit('setLookPointCoords', {
+				this.clientState.socket.emit('setLookPointCoords', {
 					id: this.playerID,
 					x,
 					y,
 				})
 			}
 		});
-	}
-
-	turnToLookPointCoords(modifier)
-	{
-		if(
-			!this.lookPointCoords.x
-			|| !this.lookPointCoords.y
-			|| !modifier
-		)
-			return;
-
-		var centerX = (this.drawX || this.x) + this.width/2, 
-			centerY = (this.drawY || this.y) + this.height/2;
-		var angleBetweenMeAndMouse = Geometry.getAngleBy2XY(
-			centerX, 
-			centerY, 
-			this.lookPointCoords.x, 
-			this.lookPointCoords.y
-		);
-
-		var d = angleBetweenMeAndMouse - (this.lookAngle % 360);
-		if (d < (-180))
-			d += 360;
-		else if (d > 180)
-			d -= 360;
-		if (d < -this.rotationSpeed * modifier)
-		{
-			this.lookAngle -= this.rotationSpeed * modifier;
-			if (this.lookAngle < 0)
-				this.lookAngle += 360;
-		}
-		else if (d > this.rotationSpeed * modifier)
-		{
-			this.lookAngle += this.rotationSpeed * modifier;
-			if (this.lookAngle > 360)
-				this.lookAngle -= 360;
-		}
-		else
-			this.lookAngle = angleBetweenMeAndMouse;
 	}
 };

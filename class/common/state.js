@@ -11,7 +11,6 @@ module.exports = class State
 	addPlayer(playerObj, id)
 	{
 		this.players[id] = playerObj;
-		// playerObj.parent = this;
 		playerObj.playerID = id;
 		return {id, obj: playerObj};
 	}
