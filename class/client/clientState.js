@@ -39,10 +39,9 @@ module.exports = class ClientState extends require('../common/state.js')
 				newPlayerShip.initMouseControl(this.canvas);
 			}
 		})
-		.on('removedPlayer', (playerID)=>
+		.on('removePlayer', (playerID)=>
 		{
 			this.entities[playerID].remove();
-			
 		})
 		.on('newProjectile', (obj)=>
 		{
@@ -86,6 +85,14 @@ module.exports = class ClientState extends require('../common/state.js')
 		{
 			obj.storeLastPosition();
 		} );
-		this.jsonPatch.applyPatch(this.entities, changes);
+		try
+		{
+			this.jsonPatch.applyPatch(this.entities, changes);
+		}
+		catch(e)
+		{
+			// if(console.warn)
+			// 	console.warn(e);
+		}
 	}
 }

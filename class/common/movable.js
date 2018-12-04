@@ -62,7 +62,6 @@ class Movable extends require('./entity.js')
 		return this.updateByAngleAndDistance(angle, this.speed * modifier);
 	}
 
-
 	moveByAngleAndSpeed(modifier)
 	{
 		this.updateByAngleAndModifier(this.lookAngle, modifier);
@@ -118,10 +117,11 @@ class Movable extends require('./entity.js')
 	{
 		var centerX = (this.drawX || this.x) + this.width/2, 
 			centerY = (this.drawY || this.y) + this.height/2;
+		var lookAngle = (this.drawLookAngle || this.lookAngle);
 
 		ctx.save();
 		ctx.translate(centerX, centerY);
-		var rotationRadian = Math.PI / 180 * -(this.lookAngle - 90);
+		var rotationRadian = Math.PI / 180 * -(lookAngle - 90);
 		ctx.rotate(rotationRadian);
 	}
 
@@ -152,6 +152,7 @@ class Movable extends require('./entity.js')
 		var modifier = timeBetweenNowAndLastUpdate / timeBetweenLastUpdates;
 		this.drawX = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].x, this.x, modifier);
 		this.drawY = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].y, this.y, modifier);
+		// this.drawLookAngle = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].lookAngle, this.lookAngle, modifier);
 	}
 
 	storeLastPosition()

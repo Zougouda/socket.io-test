@@ -22,11 +22,11 @@ module.exports = class Ship extends require('./movable.js')
 				shooting: false,
 				projectile: {
 					width: 2, 
-					height: 10, 
+					height: 8, 
 					speed: 500,
 					spriteSrc: null,
 				},
-				cooldown: 100,
+				cooldown: 50,
 			}
 		});
 	}
@@ -82,7 +82,7 @@ module.exports = class Ship extends require('./movable.js')
     updateClient(modifier)
 	{
 		super.updateClient(modifier);
-		this.turnToLookPointCoords(modifier);
+		// this.turnToLookPointCoords(modifier);
 	}
 
     setAxisMovement(axis, value)

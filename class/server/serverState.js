@@ -7,7 +7,7 @@ module.exports = class ServerState extends require('../common/state.js')
 	{
 		super(options);
 
-		this.frequency = 1000 / 50; // 50FPS
+		this.frequency = 1000 / 30; // FPS
 		this.latency = 0; // simulate server lag here
 
 		var {io = null} = options;
@@ -15,7 +15,6 @@ module.exports = class ServerState extends require('../common/state.js')
 		if(!io)
 			throw('Missing mandatory option in ServerState instance !');
 
-		// this.observer = this.jsonPatch.observe(this.players);
 		this.observer = this.jsonPatch.observe(this.entities);
 		this.initSocket();
 		this.initLoop();
@@ -99,7 +98,8 @@ module.exports = class ServerState extends require('../common/state.js')
 				change.op === 'replace' // Only send replacements patches to all clients
 				&& (
 					change.path.includes('/x') || change.path.includes('/y') // send X and Y
-					|| change.path.includes('/lookPointCoords') // send look coords
+					|| change.path.includes('/lookAngle')
+					//|| change.path.includes('/lookPointCoords') // send look coords
 				)
 			);
 		});

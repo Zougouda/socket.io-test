@@ -37,7 +37,6 @@ module.exports = class Entity
 			console.warn(e);
 		}
 
-
 		if(this.getSocket())
 		{
 			this.getSocket().emit(this.addEvent, this); // notify the client that this entity is gone
