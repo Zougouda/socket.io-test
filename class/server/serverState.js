@@ -1,5 +1,5 @@
 //const Movable = require('../common/movable.js');
-const common = require('../common/index.js');
+const commonClasses = require('../common/index.js');
 
 module.exports = class ServerState extends require('../common/state.js')
 {
@@ -15,7 +15,8 @@ module.exports = class ServerState extends require('../common/state.js')
 		if(!io)
 			throw('Missing mandatory option in ServerState instance !');
 
-		this.observer = this.jsonPatch.observe(this.players);
+		// this.observer = this.jsonPatch.observe(this.players);
+		this.observer = this.jsonPatch.observe(this.entities);
 		this.initSocket();
 		this.initLoop();
 	}
@@ -25,35 +26,53 @@ module.exports = class ServerState extends require('../common/state.js')
 		this.io.on('connection', (socket)=>
 		{
 			var clientID = socket.client.id;
-			var newPlayerData = this.addPlayer(new common.Movable(), clientID); // {id, json}
 
-			socket.broadcast.emit('newPlayer', newPlayerData); // send New player to every other client
-			Object.entries(this.players).forEach( ([id, obj])=>
+			var newPlayerShip = new commonClasses.Ship({id: clientID})
+			.addTo(this, socket);
+
+			Object.entries(this.entities).forEach( ([id, obj])=>
 			{
-				socket.emit('newPlayer', {id, obj}); // send all existing players to client
+				if(id !== clientID)
+					socket.emit('newPlayer', obj); // send all others existing objects to client
 			});
 
 			socket
 			.on('disconnect', ()=>
 			{
-				this.removePlayer(clientID);
-				socket.broadcast.emit('removedPlayer', clientID); // notify every other client that this client is gone
+				newPlayerShip.remove();
 			})
 			.on('setAxisMovement', (data)=>
 			{
 				try
 				{
-					this.players[data.id].movement[data.axis] = data.value; // TODO never trust user input
+					this.entities[data.id].movement[data.axis] = data.value; // TODO never trust user input
 				}
-				catch(e){}
+				catch(e)
+				{
+					console.warn(e);		
+				}
 			})
 			.on('setLookPointCoords', (data)=>
 			{
 				try
 				{
-					this.players[data.id].lookPointCoords = {x: data.x, y: data.y};
+					this.entities[data.id].lookPointCoords = {x: data.x, y: data.y};
 				}
-				catch(e){}
+				catch(e)
+				{
+					console.warn(e);		
+				}
+			})
+			.on('isShooting', (data)=>
+			{
+				try
+				{
+					this.entities[data.id].weapon.shooting = Boolean(data.value);
+				}
+				catch(e)
+				{
+					console.warn(e);		
+				}
 			})
 			;
 		});
@@ -61,7 +80,7 @@ module.exports = class ServerState extends require('../common/state.js')
 
     tick(modifier)
     {
-    	Object.entries(this.players).forEach( ([key, obj])=>
+    	Object.entries(this.entities).forEach( ([key, obj])=>
     	{
     	    obj.update(modifier);
 		});

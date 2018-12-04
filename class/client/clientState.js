@@ -29,14 +29,29 @@ module.exports = class ClientState extends require('../common/state.js')
 		{
 			this.playerID = this.socket.io.engine.id;
 		})
-		.on('newPlayer', (data)=>
+		.on('newPlayer', (obj)=>
 		{
-			var {id, obj} = data;
-			this.addPlayer(new commonClasses.Movable(obj), id);
+			var newPlayerShip = new commonClasses.Ship(obj)
+			.addTo(this, null);
+			if(this.isCurrentPlayer(newPlayerShip.id) )
+			{
+				newPlayerShip.initKeyboardControl();
+				newPlayerShip.initMouseControl(this.canvas);
+			}
 		})
 		.on('removedPlayer', (playerID)=>
 		{
-			this.removePlayer(playerID);
+			this.entities[playerID].remove();
+			
+		})
+		.on('newProjectile', (obj)=>
+		{
+			var bullet = new commonClasses.Projectile(obj)
+			.addTo(this);
+		})
+		.on('removeProjectile', (id)=>
+		{
+			this.entities[id].remove();
 		})
 		.on('updatePlayers', (changes)=>
 		{
@@ -50,25 +65,12 @@ module.exports = class ClientState extends require('../common/state.js')
     	return (id === this.playerID);
 	}
 
-	addPlayer(playerObj, id)
-	{
-		playerObj.clientState = this;
-		super.addPlayer(...arguments);
-		if(this.isCurrentPlayer(id) )
-		{
-			playerObj.initKeyboardControl();
-			playerObj.initMouseControl(this.canvas);
-		}
-	}
-
 	tick()
 	{
 		var secondsElapsed = this.getSecondsSinceLastTick();
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    	Object.entries(this.players).forEach( ([key, obj])=>
+    	Object.entries(this.entities).forEach( ([key, obj])=>
     	{
-			// obj.updateByInterpolation( this.now );
-			// obj.turnToLookPointCoords(secondsElapsed);
 			obj.updateClient(secondsElapsed)
     	    obj.draw(this.ctx);
     	});
@@ -80,10 +82,10 @@ module.exports = class ClientState extends require('../common/state.js')
 
 	handlePatch(changes)
 	{
-		Object.entries(this.players).forEach( ([id, obj])=>
+		Object.entries(this.entities).forEach( ([id, obj])=>
 		{
 			obj.storeLastPosition();
 		} );
-		this.jsonPatch.applyPatch(this.players, changes);
+		this.jsonPatch.applyPatch(this.entities, changes);
 	}
 }

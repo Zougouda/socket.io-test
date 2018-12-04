@@ -22,6 +22,16 @@ module.exports = class Geometry
         return angle;
     }
 
+	static getXByAngle(angle)
+	{
+		return Math.cos(angle % 360 * Math.PI / 180);
+	}
+
+	static getYByAngle(angle)
+	{
+		return Math.sin(angle % 360 * Math.PI / 180) * -1;
+	}
+
     static getXByAngleAndDistance(x, angle, distance)
     {
         return (x + Math.cos(angle % 360) * distance);
