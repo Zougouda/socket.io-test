@@ -25,6 +25,10 @@ module.exports = class ClientState extends require('../common/state.js')
 		this.socket = this.io.connect('/game');
 
 		this.socket
+		.on('reset', ()=>
+		{
+			location.reload(); // reload the whole page
+		})
 		.on('connect', ()=>
 		{
 			this.playerID = this.socket.io.engine.id;
@@ -42,6 +46,12 @@ module.exports = class ClientState extends require('../common/state.js')
 		.on('removeShip', (playerID)=>
 		{
 			this.entities[playerID].remove();
+			if(this.isCurrentPlayer(playerID) )
+			{
+				/* reload after a friendly message */
+				alert("You're dead, bro.");
+				location.reload();
+			}
 		})
 		.on('addProjectile', (obj)=>
 		{
