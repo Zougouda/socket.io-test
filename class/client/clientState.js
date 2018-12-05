@@ -50,7 +50,8 @@ module.exports = class ClientState extends require('../common/state.js')
 		})
 		.on('removeProjectile', (id)=>
 		{
-			this.entities[id].remove();
+			if( this.entities[id] )
+				this.entities[id].remove();
 		})
 		.on('updateEntities', (changes)=>
 		{

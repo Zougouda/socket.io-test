@@ -10,6 +10,7 @@ module.exports = class Ship extends require('./movable.js')
 			speed: 150, // px/s
 			rotationSpeed: 540, // deg/s
 			lookAngle: 90, // looking straight up : default angle
+			HP: 100,
 			spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/ship/spaceship.png',
 
 			addEvent: 'addShip',
@@ -22,7 +23,7 @@ module.exports = class Ship extends require('./movable.js')
 					width: 2, 
 					height: 8, 
 					speed: 500,
-					spriteSrc: null,
+					damage: 10,
 				},
 				cooldown: 50,
 			}
@@ -51,15 +52,15 @@ module.exports = class Ship extends require('./movable.js')
 				|| this.weapon.lastShotTime + this.weapon.cooldown < now
 			)
 			{
-				console.log(this.centerX, this.centerY);
             	var bullet = new Projectile(
 					Object.assign
 					(
 						Object.create(this.weapon.projectile), 
 						{
+							owner: this,
 							centerX: this.constructor.Geometry.getXByAngleAndDistance(this.centerX, this.lookAngle, this.height/2 + this.weapon.projectile.height/2),
 							centerY: this.constructor.Geometry.getYByAngleAndDistance(this.centerY, this.lookAngle, this.height/2 + this.weapon.projectile.height/2),
-							lookAngle: this.lookAngle
+							lookAngle: this.lookAngle,
 						}
 					)
 				);

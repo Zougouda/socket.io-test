@@ -1,9 +1,13 @@
+const Collision = require('./collision.js');
+
 module.exports = class Projectile extends require('./movable.js')
 {
     get defaultOptions()
     {
         return Object.assign(super.defaultOptions, {
             color: 'red',
+			damage: 0,
+			owner: null,
 
 			addEvent: 'addProjectile',
 			removeEvent: 'removeProjectile',
@@ -19,7 +23,28 @@ module.exports = class Projectile extends require('./movable.js')
     update(modifier)
     {
         this.moveByAngleAndSpeed(modifier);
+
+		this.checkForCollision();
     }
+
+	checkForCollision()
+	{
+		Object.entries( this.getState().entities ).forEach(([id, obj])=>
+		{
+			if( (this.owner && this.owner.id === obj.id) || !obj.HP)
+				return;
+			
+			if(Collision.checkCollisionBetween2rectangles(this, obj))
+			{
+				obj.HP -= this.damage;
+				this.remove();
+				if( obj.HP <= 0)
+					obj.remove();
+			}
+		});
+	}
+
+    /********** CLIENT FUNCTIONS **********/
 
 	draw(ctx)
 	{
