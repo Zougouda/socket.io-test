@@ -50,7 +50,7 @@ module.exports = class ClientState extends require('../common/state.js')
 			{
 				/* reload after a friendly message */
 				alert("You're dead, bro.");
-				location.reload();
+				//location.reload();
 			}
 		})
 		.on('addProjectile', (obj)=>
