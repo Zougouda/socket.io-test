@@ -8,9 +8,6 @@ module.exports = class State
 		this.debug = options.debug || false;
 
 		this.entities = {};
-
-		// this.players = {};
-		// this.projectiles = {};
 	}
 
 	addEntity(obj)
@@ -25,42 +22,6 @@ module.exports = class State
 	{
 		delete this.entities[id];
 	}
-
-	// addEntity(options = {})
-	// {
-	// 	var {
-	// 		obj = null,
-	// 		id = null,
-	// 	} = options;
-
-	// 	this.entities[id] = obj;
-	// 	if(id)
-	// 		obj.id = id;
-	// }
-
-	// addPlayer(playerObj, id)
-	// {
-	// 	this.players[id] = playerObj;
-	// 	playerObj.playerID = id;
-	// 	return {id, obj: playerObj};
-	// }
-
-	// removePlayer(id)
-	// {
-	// 	delete this.players[id];
-	// }
-
-	// addProjectile(obj, id)
-	// {
-	// 	this.projectiles[id] = obj;
-	// 	obj.playerID = id;
-	// 	return {id, obj: obj};
-	// }
-
-	// removeProjectile()
-	// {
-	// 	delete this.players[id];
-	// }
 
 	getSecondsSinceLastTick()
 	{

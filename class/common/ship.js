@@ -5,8 +5,6 @@ module.exports = class Ship extends require('./movable.js')
     get defaultOptions()
 	{
 		return Object.assign(super.defaultOptions, {
-			// x: 50,
-			// y: 50,
 			width: 42,
 			height: 60,
 			speed: 150, // px/s
