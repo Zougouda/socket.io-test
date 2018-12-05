@@ -14,8 +14,8 @@ module.exports = class Ship extends require('./movable.js')
 			lookAngle: 90, // looking straight up : default angle
 			spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/ship/spaceship.png',
 
-			addEvent: 'newPlayer',
-			removeEvent: 'removePlayer',
+			addEvent: 'addShip',
+			removeEvent: 'removeShip',
 
 			weapon: 
 			{

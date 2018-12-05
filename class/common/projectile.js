@@ -5,7 +5,7 @@ module.exports = class Projectile extends require('./movable.js')
         return Object.assign(super.defaultOptions, {
             color: 'red',
 
-			addEvent: 'newProjectile',
+			addEvent: 'addProjectile',
 			removeEvent: 'removeProjectile',
         });
     }

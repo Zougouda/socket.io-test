@@ -105,7 +105,7 @@ module.exports = class ServerState extends require('../common/state.js')
 		});
 		setTimeout(()=>
 		{
-			this.io.emit('updatePlayers', changes);
+			this.io.emit('updateEntities', changes);
 		}, this.latency);
 		
 	}

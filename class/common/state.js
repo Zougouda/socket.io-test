@@ -5,6 +5,8 @@ module.exports = class State
 		this.jsonPatch = require('fast-json-patch');
 		this.then = this.now = Date.now();
 
+		this.debug = options.debug || false;
+
 		this.entities = {};
 
 		// this.players = {};

@@ -29,7 +29,7 @@ module.exports = class ClientState extends require('../common/state.js')
 		{
 			this.playerID = this.socket.io.engine.id;
 		})
-		.on('newPlayer', (obj)=>
+		.on('addShip', (obj)=>
 		{
 			var newPlayerShip = new commonClasses.Ship(obj)
 			.addTo(this, null);
@@ -39,11 +39,11 @@ module.exports = class ClientState extends require('../common/state.js')
 				newPlayerShip.initMouseControl(this.canvas);
 			}
 		})
-		.on('removePlayer', (playerID)=>
+		.on('removeShip', (playerID)=>
 		{
 			this.entities[playerID].remove();
 		})
-		.on('newProjectile', (obj)=>
+		.on('addProjectile', (obj)=>
 		{
 			var bullet = new commonClasses.Projectile(obj)
 			.addTo(this);
@@ -52,7 +52,7 @@ module.exports = class ClientState extends require('../common/state.js')
 		{
 			this.entities[id].remove();
 		})
-		.on('updatePlayers', (changes)=>
+		.on('updateEntities', (changes)=>
 		{
 			this.handlePatch(changes);
 		})
@@ -91,7 +91,7 @@ module.exports = class ClientState extends require('../common/state.js')
 		}
 		catch(e)
 		{
-			 if(console.warn)
+			 if(this.debug && console.warn)
 			 	console.warn(e);
 		}
 	}
