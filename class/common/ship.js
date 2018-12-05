@@ -58,8 +58,8 @@ module.exports = class Ship extends require('./movable.js')
 					(
 						Object.create(this.weapon.projectile), 
 						{
-							x: this.centerX, 
-							y: this.centerY, 
+							x: this.constructor.Geometry.getXByAngleAndDistance(this.centerX, this.lookAngle, this.height/2),
+							y: this.constructor.Geometry.getYByAngleAndDistance(this.centerY, this.lookAngle, this.height/2),
 							lookAngle: this.lookAngle
 						}
 					)

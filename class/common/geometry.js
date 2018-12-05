@@ -34,12 +34,12 @@ module.exports = class Geometry
 
     static getXByAngleAndDistance(x, angle, distance)
     {
-        return (x + Math.cos(angle % 360) * distance);
+        return (x + this.getXByAngle(angle) * distance);
     }
     
     static getYByAngleAndDistance(y, angle, distance)
     {
-        return (y + Math.sin(angle % 360) * distance);
+        return (y + this.getYByAngle(angle) * distance);
     }
 
     /**
