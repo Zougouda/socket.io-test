@@ -22,15 +22,6 @@ class Movable extends require('./entity.js')
 		return this.centerY - this.height/2;
 	}
 
-	//get centerX()
-	//{
-	//	return this.x + this.width/2;
-	//}
-	//get centerY()
-	//{
-	//	return this.y + this.height / 2;
-	//}
-
 	init()
 	{
 		// var colors = ['red', 'blue', 'green', 'purple'];
@@ -41,11 +32,7 @@ class Movable extends require('./entity.js')
 			x: 0,
 			y: 0,
 		};
-		this.clientCoords = {
-			//centerX: this.centerX,
-			//centerY: this.centerY,
-			//lookAngle: this.lookAngle,
-		};
+		this.clientCoords = {}; // this obj contains client-only vars used for interpolation
 
 		/* Client behaviour */
 		if(typeof window !== 'undefined')
@@ -170,7 +157,7 @@ class Movable extends require('./entity.js')
 		var modifier = timeBetweenNowAndLastUpdate / timeBetweenLastUpdates;
 		this.clientCoords.centerX = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].centerX, this.centerX, modifier);
 		this.clientCoords.centerY = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].centerY, this.centerY, modifier);
-		// this.drawLookAngle = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].lookAngle, this.lookAngle, modifier);
+		// this.clientCoords.lookAngle = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].lookAngle, this.lookAngle, modifier);
 	}
 
 	storeLastPosition()
