@@ -23,6 +23,12 @@ httpServer.listen(port);
 
 const io = socketio(httpServer);
 
-new ServerState({io: io.of('/game')});
+var serverState = new ServerState({io: io.of('/game')});
+
+process.on('SIGINT', async function()
+{
+	serverState.io.emit('reset');
+	process.exit();
+});
 
 console.log('ready');
