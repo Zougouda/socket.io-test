@@ -3,20 +3,33 @@ class Movable extends require('./entity.js')
 	get defaultOptions()
 	{
 		return Object.assign(super.defaultOptions, {
+			centerX: 50,
+			centerY: 50,
+			width: 50,
+			height: 50,
 			speed: 150, // px/s
 			rotationSpeed: 540, // deg/s
 			lookAngle: 90, // looking straight up : default angle
 		});
 	}
 
-	get centerX()
+	get leftX()
 	{
-		return this.x + this.width/2;
+		return this.centerX - this.width/2;
 	}
-	get centerY()
+	get topY()
 	{
-		return this.y + this.height / 2;
+		return this.centerY - this.height/2;
 	}
+
+	//get centerX()
+	//{
+	//	return this.x + this.width/2;
+	//}
+	//get centerY()
+	//{
+	//	return this.y + this.height / 2;
+	//}
 
 	init()
 	{
@@ -27,6 +40,11 @@ class Movable extends require('./entity.js')
 		this.movement = {
 			x: 0,
 			y: 0,
+		};
+		this.clientCoords = {
+			//centerX: this.centerX,
+			//centerY: this.centerY,
+			//lookAngle: this.lookAngle,
 		};
 
 		/* Client behaviour */
@@ -47,14 +65,14 @@ class Movable extends require('./entity.js')
 
 	updateByMovement(modifier)
 	{
-		this.x += this.movement.x * this.speed * modifier;
-		this.y += this.movement.y * this.speed * modifier;
+		this.centerX += this.movement.x * this.speed * modifier;
+		this.centerY += this.movement.y * this.speed * modifier;
 	}
 
 	updateByAngleAndDistance(angle, distance)
 	{
-		this.x += distance * this.constructor.Geometry.getXByAngle(angle);
-	    this.y += distance * this.constructor.Geometry.getYByAngle(angle);
+		this.centerX += distance * this.constructor.Geometry.getXByAngle(angle);
+	    this.centerY += distance * this.constructor.Geometry.getYByAngle(angle);
 	}
 
 	updateByAngleAndModifier(angle, modifier)
@@ -99,8 +117,8 @@ class Movable extends require('./entity.js')
 		)
 			return;
 
-		var centerX = (this.drawX || this.x) + this.width/2, 
-			centerY = (this.drawY || this.y) + this.height/2;
+		var centerX = (this.clientCoords.centerX || this.centerX), 
+			centerY = (this.clientCoords.centerY || this.centerY);
 		var angleBetweenMeAndMouse = this.constructor.Geometry.getAngleBy2XY(
 			centerX, 
 			centerY, 
@@ -115,9 +133,9 @@ class Movable extends require('./entity.js')
 
 	rotateContextByLookAngle(ctx)
 	{
-		var centerX = (this.drawX || this.x) + this.width/2, 
-			centerY = (this.drawY || this.y) + this.height/2;
-		var lookAngle = (this.drawLookAngle || this.lookAngle);
+		var centerX = (this.clientCoords.centerX || this.centerX), 
+			centerY = (this.clientCoords.centerY || this.centerY);
+		var lookAngle = (this.clientCoords.lookAngle || this.lookAngle);
 
 		ctx.save();
 		ctx.translate(centerX, centerY);
@@ -150,16 +168,16 @@ class Movable extends require('./entity.js')
 		var timeBetweenLastUpdates = this.serverUpdatesArray[1].timestamp - this.serverUpdatesArray[0].timestamp;
 		var timeBetweenNowAndLastUpdate = now -this.serverUpdatesArray[1].timestamp;
 		var modifier = timeBetweenNowAndLastUpdate / timeBetweenLastUpdates;
-		this.drawX = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].x, this.x, modifier);
-		this.drawY = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].y, this.y, modifier);
+		this.clientCoords.centerX = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].centerX, this.centerX, modifier);
+		this.clientCoords.centerY = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].centerY, this.centerY, modifier);
 		// this.drawLookAngle = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].lookAngle, this.lookAngle, modifier);
 	}
 
 	storeLastPosition()
 	{
 		this.serverUpdatesArray.push({
-			x: this.x,
-			y: this.y,
+			centerX: this.centerX,
+			centerY: this.centerY,
 			lookAngle: this.lookAngle,
 			timestamp: Date.now(),
 		})

@@ -11,10 +11,10 @@ module.exports = class Entity
     {
         return {
             id: null,
-            x: 0,
-            y: 0,
-            width: 50,
-            height: 50,
+            //x: 0,
+            //y: 0,
+            //width: 50,
+            //height: 50,
 
 			addEvent: 'newEntity',
 			removeEvent: 'removeEntity',

@@ -91,8 +91,8 @@ module.exports = class ClientState extends require('../common/state.js')
 		}
 		catch(e)
 		{
-			// if(console.warn)
-			// 	console.warn(e);
+			 if(console.warn)
+			 	console.warn(e);
 		}
 	}
 }

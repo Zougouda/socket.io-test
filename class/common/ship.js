@@ -53,13 +53,14 @@ module.exports = class Ship extends require('./movable.js')
 				|| this.weapon.lastShotTime + this.weapon.cooldown < now
 			)
 			{
+				console.log(this.centerX, this.centerY);
             	var bullet = new Projectile(
 					Object.assign
 					(
 						Object.create(this.weapon.projectile), 
 						{
-							x: this.constructor.Geometry.getXByAngleAndDistance(this.centerX, this.lookAngle, this.height/2),
-							y: this.constructor.Geometry.getYByAngleAndDistance(this.centerY, this.lookAngle, this.height/2),
+							centerX: this.constructor.Geometry.getXByAngleAndDistance(this.centerX, this.lookAngle, this.height/2 + this.weapon.projectile.height/2),
+							centerY: this.constructor.Geometry.getYByAngleAndDistance(this.centerY, this.lookAngle, this.height/2 + this.weapon.projectile.height/2),
 							lookAngle: this.lookAngle
 						}
 					)

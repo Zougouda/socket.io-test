@@ -97,7 +97,7 @@ module.exports = class ServerState extends require('../common/state.js')
 			return (
 				change.op === 'replace' // Only send replacements patches to all clients
 				&& (
-					change.path.includes('/x') || change.path.includes('/y') // send X and Y
+					change.path.includes('/centerX') || change.path.includes('/centerY') // send X and Y
 					|| change.path.includes('/lookAngle')
 					//|| change.path.includes('/lookPointCoords') // send look coords
 				)
