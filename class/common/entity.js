@@ -11,15 +11,21 @@ module.exports = class Entity
     {
         return {
             id: null,
-            //x: 0,
-            //y: 0,
-            //width: 50,
-            //height: 50,
 
 			addEvent: 'newEntity',
 			removeEvent: 'removeEntity',
         };
     }
+
+	onAdd()
+	{
+		return null; // to be overriden
+	}
+
+	onRemove()
+	{
+		return null; // to be overriden
+	}
 
     addTo(state, socket)
     {
@@ -43,6 +49,8 @@ module.exports = class Entity
 			this.getSocket().broadcast.emit(this.addEvent, this); // notify every other client that this entity is gone
 		}
 
+		this.onAdd();
+
         return this;
     }
 	remove()
@@ -53,11 +61,9 @@ module.exports = class Entity
 			this.getSocket().broadcast.emit(this.removeEvent, this.id); // notify every other client that this entity is gone
 		}
 		this.getState().removeEntity(this.id);
+
+		this.onRemove();
 	}
-    removeFrom(group)
-    {
-        delete group[this.id];
-    }
 
     getState()
     {

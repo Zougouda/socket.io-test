@@ -33,35 +33,25 @@ module.exports = class ClientState extends require('../common/state.js')
 		{
 			this.playerID = this.socket.io.engine.id;
 		})
-		.on('addShip', (obj)=>
+		.on('removeEntity', (id)=>
 		{
-			var newPlayerShip = new commonClasses.Ship(obj)
-			.addTo(this, null);
-			if(this.isCurrentPlayer(newPlayerShip.id) )
-			{
-				newPlayerShip.initKeyboardControl();
-				newPlayerShip.initMouseControl(this.canvas);
-			}
-		})
-		.on('removeShip', (playerID)=>
-		{
-			this.entities[playerID].remove();
-			if(this.isCurrentPlayer(playerID) )
+			if( this.entities[id] )
+				this.entities[id].remove();
+			if(this.isCurrentPlayer(id) )
 			{
 				/* reload after a friendly message */
 				alert("You're dead, bro.");
-				//location.reload();
 			}
+		})
+		.on('addShip', (obj)=>
+		{
+			var newPlayerShip = new commonClasses.Ship(obj)
+			.addTo(this);
 		})
 		.on('addProjectile', (obj)=>
 		{
 			var bullet = new commonClasses.Projectile(obj)
 			.addTo(this);
-		})
-		.on('removeProjectile', (id)=>
-		{
-			if( this.entities[id] )
-				this.entities[id].remove();
 		})
 		.on('updateEntities', (changes)=>
 		{

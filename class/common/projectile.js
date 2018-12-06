@@ -10,7 +10,6 @@ module.exports = class Projectile extends require('./movable.js')
 			owner: null,
 
 			addEvent: 'addProjectile',
-			removeEvent: 'removeProjectile',
         });
     }
 

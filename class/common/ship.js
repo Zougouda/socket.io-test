@@ -14,7 +14,6 @@ module.exports = class Ship extends require('./movable.js')
 			spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/ship/spaceship.png',
 
 			addEvent: 'addShip',
-			removeEvent: 'removeShip',
 
 			weapon: 
 			{
@@ -36,6 +35,19 @@ module.exports = class Ship extends require('./movable.js')
 
         this.lookPointCoords = {};
     }
+
+	onAdd()
+	{
+		/* client-side behaviour */
+		if(typeof window !== 'undefined')
+		{
+			if(this.getState() && this.getState().isCurrentPlayer(this.id) )
+			{
+				this.initKeyboardControl();
+				this.initMouseControl(this.getState().canvas);
+			}
+		}
+	}
 
     update(modifier)
     {
