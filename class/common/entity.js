@@ -56,20 +56,22 @@ module.exports = class Entity
 			console.warn(e);
 		}
 
-		this.emitAdd(true);
+		this.emitAdd(this.getSocket(), true);
 
 		this.onAdd();
 
         return this;
     }
-	emitAdd(broadcast = false)
+	emitAdd(socket, broadcast = false)
 	{
-		if(this.getSocket())
-		{
-			this.getSocket().emit(this.addEvent, {options: this, constructor: this.constructor.name}); // notify the client that this entity is added
-			if(broadcast)
-				this.getSocket().broadcast.emit(this.addEvent, {options: this, constructor: this.constructor.name}); // notify every other client that this entity is added
-		}
+		if(!socket)
+			return;
+
+		var data = {options: this, constructor: this.constructor.name};
+
+		socket.emit(this.addEvent, data); // notify the client that this entity is added
+		if(broadcast)
+			socket.broadcast.emit(this.addEvent, data); // notify every other client that this entity is added
 	}
 	remove()
 	{

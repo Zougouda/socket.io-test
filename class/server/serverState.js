@@ -31,7 +31,10 @@ module.exports = class ServerState extends require('../common/state.js')
 
 			Object.entries(this.entities).forEach( ([id, obj])=>
 			{
-				obj.emitAdd(false); // send all others existing objects to client
+				if(id === clientID)
+					return;
+
+				obj.emitAdd(socket); // send all others existing objects to client
 			});
 
 			socket
