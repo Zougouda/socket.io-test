@@ -13,7 +13,7 @@ module.exports = class Ship extends require('./movable.js')
 			HP: 100,
 			spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/ship/spaceship.png',
 
-			addEvent: 'addShip',
+			//addEvent: 'addShip',
 
 			weapon: 
 			{

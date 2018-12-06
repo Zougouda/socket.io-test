@@ -43,16 +43,24 @@ module.exports = class ClientState extends require('../common/state.js')
 				alert("You're dead, bro.");
 			}
 		})
-		.on('addShip', (obj)=>
+		.on('addEntity', (data)=>
 		{
-			var newPlayerShip = new commonClasses.Ship(obj)
+			var constructorToUse = commonClasses[data.constructor];
+			var options = data.options;
+
+			var newEntity = new constructorToUse(options) // create the object based on the data sent from the server
 			.addTo(this);
 		})
-		.on('addProjectile', (obj)=>
-		{
-			var bullet = new commonClasses.Projectile(obj)
-			.addTo(this);
-		})
+		//.on('addShip', (obj)=>
+		//{
+		//	var newPlayerShip = new commonClasses.Ship(obj)
+		//	.addTo(this);
+		//})
+		//.on('addProjectile', (obj)=>
+		//{
+		//	var bullet = new commonClasses.Projectile(obj)
+		//	.addTo(this);
+		//})
 		.on('updateEntities', (changes)=>
 		{
 			this.handlePatch(changes);

@@ -12,7 +12,7 @@ module.exports = class Entity
         return {
             id: null,
 
-			addEvent: 'newEntity',
+			addEvent: 'addEntity',
 			removeEvent: 'removeEntity',
         };
     }
@@ -43,16 +43,21 @@ module.exports = class Entity
 			console.warn(e);
 		}
 
-		if(this.getSocket())
-		{
-			this.getSocket().emit(this.addEvent, this); // notify the client that this entity is gone
-			this.getSocket().broadcast.emit(this.addEvent, this); // notify every other client that this entity is gone
-		}
+		this.emitAdd(true);
 
 		this.onAdd();
 
         return this;
     }
+	emitAdd(broadcast = false)
+	{
+		if(this.getSocket())
+		{
+			this.getSocket().emit(this.addEvent, {options: this, constructor: this.constructor.name}); // notify the client that this entity is gone
+			if(broadcast)
+				this.getSocket().broadcast.emit(this.addEvent, {options: this, constructor: this.constructor.name}); // notify every other client that this entity is gone
+		}
+	}
 	remove()
 	{
 		if(this.getSocket())
