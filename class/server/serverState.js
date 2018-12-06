@@ -7,7 +7,7 @@ module.exports = class ServerState extends require('../common/state.js')
 	{
 		super(options);
 
-		this.frequency = 1000 / 30; // FPS
+		this.frequency = 1000 / 60; // FPS
 		this.latency = 0; // simulate server lag here
 
 		var {io = null} = options;
