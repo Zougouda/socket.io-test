@@ -13,6 +13,8 @@ module.exports = class Ship extends require('./movable.js')
 			HP: 100,
 			spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/ship/spaceship.png',
 
+			name: '',
+
 			//addEvent: 'addShip',
 
 			weapon: 
@@ -90,6 +92,22 @@ module.exports = class Ship extends require('./movable.js')
     }
 
     /********** CLIENT FUNCTIONS **********/
+
+
+	draw(ctx)
+	{
+		super.draw(ctx);
+
+		/* write player's name if has one */
+		if(this.name)
+		{
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'top';
+			ctx.fillStyle = 'black';
+			ctx.font = '12px Arial'
+			ctx.strokeText(this.name, this.centerX, this.centerY + this.height/2)
+		}
+	}
     
     updateClient(modifier)
 	{

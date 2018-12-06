@@ -16,8 +16,9 @@ module.exports = class ClientState extends require('../common/state.js')
 
 		this.playerID = null;
 
-		this.initSocket(); // Start listening from the server
 		this.tick(); // Start ticking 
+
+		this.initSocket(); // Start listening from the server
 	}
 
 	initSocket()
@@ -25,13 +26,19 @@ module.exports = class ClientState extends require('../common/state.js')
 		this.socket = this.io.connect('/game');
 
 		this.socket
-		.on('reset', ()=>
-		{
-			location.reload(); // reload the whole page
-		})
 		.on('connect', ()=>
 		{
 			this.playerID = this.socket.io.engine.id;
+			this.playerName = window.prompt("What's your name ?", localStorage.getItem('playerName') || '');
+			if(!!this.playerName)
+			{
+				localStorage.setItem('playerName', this.playerName);
+				this.socket.emit('newChallenger', {name: this.playerName});
+			}
+		})
+		.on('reset', ()=>
+		{
+			location.reload(); // reload the whole page
 		})
 		.on('removeEntity', (id)=>
 		{

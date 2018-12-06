@@ -26,21 +26,23 @@ module.exports = class ServerState extends require('../common/state.js')
 		{
 			var clientID = socket.client.id;
 
-			var newPlayerShip = new commonClasses.Ship({id: clientID})
-			.addTo(this, socket);
-
-			Object.entries(this.entities).forEach( ([id, obj])=>
-			{
-				if(id === clientID)
-					return;
-
-				obj.emitAdd(socket); // send all others existing objects to client
-			});
-
 			socket
+			.on('newChallenger', (data)=>
+			{
+				var newPlayerShip = new commonClasses.Ship({id: clientID, name: data.name})
+				.addTo(this, socket);
+
+				Object.entries(this.entities).forEach( ([id, obj])=>
+				{
+					if(id === clientID)
+						return;
+
+					obj.emitAdd(socket); // send all others existing objects to client
+				});
+			})
 			.on('disconnect', ()=>
 			{
-				newPlayerShip.remove();
+				this.removeEntity(clientID);
 			})
 			.on('setAxisMovement', (data)=>
 			{
