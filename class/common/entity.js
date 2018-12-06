@@ -16,12 +16,25 @@ module.exports = class Entity
 			removeEvent: 'removeEntity',
         };
     }
+    applyOptions()
+    {
+        if(!this.options)
+            return;
+        
+        Object.entries( this.defaultOptions )
+        .forEach( ([key, defaultValue]) => 
+        {
+            if(this.options[key] === undefined)
+                this[key] = defaultValue; // apply default value if doesnt exist
+            else
+                this[key] = this.options[key]; // or use given value
+        });
+    }
 
 	onAdd()
 	{
 		return null; // to be overriden
 	}
-
 	onRemove()
 	{
 		return null; // to be overriden
@@ -53,9 +66,9 @@ module.exports = class Entity
 	{
 		if(this.getSocket())
 		{
-			this.getSocket().emit(this.addEvent, {options: this, constructor: this.constructor.name}); // notify the client that this entity is gone
+			this.getSocket().emit(this.addEvent, {options: this, constructor: this.constructor.name}); // notify the client that this entity is added
 			if(broadcast)
-				this.getSocket().broadcast.emit(this.addEvent, {options: this, constructor: this.constructor.name}); // notify every other client that this entity is gone
+				this.getSocket().broadcast.emit(this.addEvent, {options: this, constructor: this.constructor.name}); // notify every other client that this entity is added
 		}
 	}
 	remove()
@@ -77,21 +90,6 @@ module.exports = class Entity
     getSocket()
     {
         return false; // to be overriden
-    }
-
-    applyOptions()
-    {
-        if(!this.options)
-            return;
-        
-        Object.entries( this.defaultOptions )
-        .forEach( ([key, defaultValue]) => 
-        {
-            if(this.options[key] === undefined)
-                this[key] = defaultValue; // apply default value if doesnt exist
-            else
-                this[key] = this.options[key]; // or use given value
-        });
     }
 
     init()
