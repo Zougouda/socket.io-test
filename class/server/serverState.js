@@ -33,8 +33,8 @@ module.exports = class ServerState extends require('../common/state.js')
 				playerShip = new commonClasses.Ship({
 					id: clientID, 
 					name: data.name, 
-					centerX: Math.random() * (1024 - 100) + 100,
-					centerY: Math.random() * (768 - 100) + 100,
+					centerX: Math.random() * (this.canvasWidth - 100) + 100,
+					centerY: Math.random() * (this.canvasHeight - 100) + 100,
 				})
 				.addTo(this, socket);
 
