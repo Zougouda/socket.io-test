@@ -48,7 +48,8 @@ module.exports = class ServerState extends require('../common/state.js')
 			})
 			.on('disconnect', ()=>
 			{
-				playerShip.remove();
+				if(playerShip)
+					playerShip.remove();
 			})
 			.on('setAxisMovement', (data)=>
 			{
