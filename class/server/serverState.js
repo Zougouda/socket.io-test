@@ -25,11 +25,17 @@ module.exports = class ServerState extends require('../common/state.js')
 		this.io.on('connection', (socket)=>
 		{
 			var clientID = socket.client.id;
+			var playerShip = null;
 
 			socket
 			.on('newChallenger', (data)=>
 			{
-				var newPlayerShip = new commonClasses.Ship({id: clientID, name: data.name})
+				playerShip = new commonClasses.Ship({
+					id: clientID, 
+					name: data.name, 
+					centerX: Math.random() * 200 + 50, 
+					centerY: Math.random() * 200 + 50,
+				})
 				.addTo(this, socket);
 
 				Object.entries(this.entities).forEach( ([id, obj])=>
@@ -42,7 +48,7 @@ module.exports = class ServerState extends require('../common/state.js')
 			})
 			.on('disconnect', ()=>
 			{
-				this.removeEntity(clientID);
+				playerShip.remove();
 			})
 			.on('setAxisMovement', (data)=>
 			{
