@@ -8,6 +8,9 @@ module.exports = class State
 		this.debug = options.debug || false;
 
 		this.entities = {};
+
+		this.canvasWidth = 1024; 
+		this.canvasHeight = 768;
 	}
 
 	addEntity(obj)

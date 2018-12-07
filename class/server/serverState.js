@@ -7,7 +7,7 @@ module.exports = class ServerState extends require('../common/state.js')
 	{
 		super(options);
 
-		this.frequency = 1000 / 60; // FPS
+		this.frequency = 1000 / 30; // FPS
 		this.latency = 0; // simulate server lag here
 
 		var {io = null} = options;
@@ -33,8 +33,8 @@ module.exports = class ServerState extends require('../common/state.js')
 				playerShip = new commonClasses.Ship({
 					id: clientID, 
 					name: data.name, 
-					centerX: Math.random() * 200 + 50, 
-					centerY: Math.random() * 200 + 50,
+					centerX: Math.random() * (1024 - 100) + 100,
+					centerY: Math.random() * (768 - 100) + 100,
 				})
 				.addTo(this, socket);
 
@@ -55,7 +55,7 @@ module.exports = class ServerState extends require('../common/state.js')
 			{
 				try
 				{
-					this.entities[data.id].movement[data.axis] = data.value; // TODO never trust user input
+					this.entities[data.id].movement[data.axis] = Math.max(Math.min(data.value, 1), -1); // -1 >= movementValue =< 1
 				}
 				catch(e)
 				{
@@ -107,13 +107,11 @@ module.exports = class ServerState extends require('../common/state.js')
 		{
 			return (
 				change.op === 'replace' // Only send replacements patches to all clients
-				//&& (
-				//	//!change.path.includes('clientCoords')
-
-				//	change.path.includes('/centerX') || change.path.includes('/centerY') // send X and Y
-				//	|| change.path.includes('/lookAngle')
-				//	//|| change.path.includes('/lookPointCoords') // send look coords
-				//)
+				// && (
+				// 	change.path.includes('/centerX') || change.path.includes('/centerY') // send X and Y
+				// 	|| change.path.includes('/lookAngle')
+				// 	|| change.path.includes('/HP')
+				// )
 			);
 		});
 

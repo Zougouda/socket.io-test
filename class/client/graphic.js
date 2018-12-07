@@ -1,5 +1,45 @@
 module.exports = class Graphic
 {
+	static resizeCanvas(options)
+    {
+		var {
+			canvas,
+			width, 
+			height,
+		} = options;
+
+        canvas.width = width;
+        canvas.height = height;
+
+        var gameWidth = window.innerWidth;
+        var gameHeight = window.innerHeight;
+        var scaleToFitX = gameWidth / canvas.width;
+        var scaleToFitY = gameHeight / canvas.height;
+        var currentScreenRatio = gameWidth / gameHeight;
+        var optimalRatio = Math.min(scaleToFitX, scaleToFitY);
+        if (currentScreenRatio >= 1.77 && currentScreenRatio <= 1.79) //if fullscreen
+        {
+            canvas.ratio = width / gameWidth;
+            canvas.style.width = gameWidth + "px";
+            canvas.style.height = gameHeight + "px";
+        }
+        else
+        {
+            canvas.ratio = width / (canvas.width * optimalRatio);
+            canvas.style.width = canvas.width * optimalRatio + "px";
+            canvas.style.height = canvas.height * optimalRatio + "px";
+        }
+
+        //Canvas at middle
+        canvas.style.position = "absolute";
+
+        canvas.style.marginLeft = parseInt(canvas.style.width, 10) / -2 + "px";
+        canvas.style.left = "50%";
+
+        canvas.style.marginTop = parseInt(canvas.style.height, 10) / -2 + "px";
+        canvas.style.top = "50%";
+    }
+	
 	static getDynamicColor(options)
 	{
 		var {

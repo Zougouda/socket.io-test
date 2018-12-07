@@ -118,15 +118,24 @@ class Movable extends require('./entity.js')
 
 	/********** CLIENT FUNCTIONS **********/
 
+	get clientCenterX()
+	{
+		return this.clientCoords.centerX || this.centerX;
+	}
+	get clientCenterY()
+	{
+		return this.clientCoords.centerY || this.centerY;
+	}
+	get clientLookAngle()
+	{
+		return this.clientCoords.lookAngle || this.lookAngle;
+	}
+
 	rotateContextByLookAngle(ctx)
 	{
-		var centerX = (this.clientCoords.centerX || this.centerX), 
-			centerY = (this.clientCoords.centerY || this.centerY);
-		var lookAngle = (this.clientCoords.lookAngle || this.lookAngle);
-
 		ctx.save();
-		ctx.translate(centerX, centerY);
-		var rotationRadian = Math.PI / 180 * -(lookAngle - 90);
+		ctx.translate(this.clientCenterX, this.clientCenterY);
+		var rotationRadian = Math.PI / 180 * -(this.clientLookAngle - 90);
 		ctx.rotate(rotationRadian);
 	}
 
@@ -155,6 +164,7 @@ class Movable extends require('./entity.js')
 		var timeBetweenLastUpdates = this.serverUpdatesArray[1].timestamp - this.serverUpdatesArray[0].timestamp;
 		var timeBetweenNowAndLastUpdate = now -this.serverUpdatesArray[1].timestamp;
 		var modifier = timeBetweenNowAndLastUpdate / timeBetweenLastUpdates;
+		
 		this.clientCoords.centerX = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].centerX, this.centerX, modifier);
 		this.clientCoords.centerY = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].centerY, this.centerY, modifier);
 		// this.clientCoords.lookAngle = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].lookAngle, this.lookAngle, modifier);

@@ -12,13 +12,28 @@ module.exports = class ClientState extends require('../common/state.js')
 		this.io = io;
 
 		this.canvas = canvas;
-		this.ctx = this.canvas.getContext('2d');
 
 		this.playerID = null;
 
+		this.initCanvas(); // setup canvas(es)
 		this.tick(); // Start ticking 
-
 		this.initSocket(); // Start listening from the server
+	}
+
+	initCanvas()
+	{
+		this.ctx = this.canvas.getContext('2d');
+
+		var onResize = ()=>
+		{
+			commonClasses.Graphic.resizeCanvas({
+				canvas: this.canvas,
+				width: this.canvasWidth,
+				height: this.canvasHeight,
+			});
+		};
+		window.addEventListener('resize', onResize);
+		onResize();
 	}
 
 	initSocket()
