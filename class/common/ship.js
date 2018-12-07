@@ -123,17 +123,25 @@ module.exports = class Ship extends require('./movable.js')
 		// this.turnToLookPointCoords(modifier);
 	}
 
-    setAxisMovement(axis, value)
+	setAxisMovement(axis, value)
 	{
-		this.movement[axis] += value;
+		this.movement[axis] = value;
 		if(typeof this.getState() !== 'undefined')
 		{
 			this.getState().socket.emit('setAxisMovement', {
 				id: this.id,
 				axis,
-				value: this.movement[axis],
+				value,
 			});
 		}
+	}
+
+    addAxisMovement(axis, value)
+	{
+		var currentValue = this.movement[axis];
+		var valueAfterAdd = currentValue + value;
+		if(valueAfterAdd >= -1 && valueAfterAdd <= 1 )
+			this.setAxisMovement(axis, valueAfterAdd)
 	}
 
 	initKeyboardControl()
@@ -159,23 +167,19 @@ module.exports = class Ship extends require('./movable.js')
 			{
 				case 90: // Z
                 case 38: // up
-					if(this.movement.y >= 0)
-						this.setAxisMovement('y', -1);
+					this.addAxisMovement('y', -1);
 				break;
 				case 83: // S
 				case 40: // down
-					if(this.movement.y <= 0)
-						this.setAxisMovement('y', 1);
+					this.addAxisMovement('y', 1);
 				break;
 				case 81: // Q
 				case 37: // left
-					if(this.movement.x >= 0)
-						this.setAxisMovement('x', -1);
+					this.addAxisMovement('x', -1);
 				break;
 				case 68: // D
 				case 39: //right
-					if(this.movement.x <= 0)
-						this.setAxisMovement('x', 1);
+					this.addAxisMovement('x', 1);
 				break;
 			}
 		}, false);
@@ -186,27 +190,19 @@ module.exports = class Ship extends require('./movable.js')
 			{
 				case 90: // Z
 				case 38: // up
-					if(this.movement.y <= 0)
-						// this.setAxisMovement('y', 0);
-						this.setAxisMovement('y', 1);
+					this.addAxisMovement('y', 1);
 				break;
 				case 83: // S
 				case 40: // down
-					if(this.movement.y >= 0)
-					// 	this.setAxisMovement('y', 0);
-						this.setAxisMovement('y', -1);
+					this.addAxisMovement('y', -1);
 				break;
 				case 81: // Q
 				case 37: // left
-					if(this.movement.x <= 0)
-					// 	this.setAxisMovement('x', 0);
-						this.setAxisMovement('x', 1);
+						this.addAxisMovement('x', 1);
 				break;
 				case 68: // D
 				case 39: //right
-					if(this.movement.x >= 0)
-					// 	this.setAxisMovement('x', 0);
-						this.setAxisMovement('x', -1);
+						this.addAxisMovement('x', -1);
 				break;
 			}
 		}, false);
