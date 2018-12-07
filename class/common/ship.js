@@ -36,6 +36,8 @@ module.exports = class Ship extends require('./movable.js')
         super.init();
 
         this.lookPointCoords = {};
+
+		this.maxHP = this.HP;
     }
 
 	onAdd()
@@ -103,9 +105,15 @@ module.exports = class Ship extends require('./movable.js')
 		{
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'top';
-			ctx.fillStyle = 'black';
-			ctx.font = '12px Arial'
-			ctx.strokeText(this.name, this.centerX, this.centerY + this.height/2)
+			ctx.font = '12px Arial';
+			var colorByRemainingHP = commonClasses.Graphic.getDynamicColor({
+				startColor: [0, 130, 0],
+				endColor: [255, 0, 0],
+				ratio: this.HP / this.maxHP,
+				opacity: 1,
+			});
+			ctx.fillStyle = colorByRemainingHP;
+			ctx.fillText(this.name, this.centerX, this.centerY + this.height/2)
 		}
 	}
     

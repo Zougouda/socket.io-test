@@ -3,4 +3,6 @@ module.exports = {
 	Movable: require('./movable.js'),
 	Ship: require('./ship.js'),
 	Projectile: require('./projectile.js'),
+
+	Graphic: require('../client/graphic.js'),
 };

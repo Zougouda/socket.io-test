@@ -100,18 +100,23 @@ module.exports = class ServerState extends require('../common/state.js')
 		{
 			return (
 				change.op === 'replace' // Only send replacements patches to all clients
-				&& (
-					change.path.includes('/centerX') || change.path.includes('/centerY') // send X and Y
-					|| change.path.includes('/lookAngle')
-					//|| change.path.includes('/lookPointCoords') // send look coords
-				)
+				//&& (
+				//	//!change.path.includes('clientCoords')
+
+				//	change.path.includes('/centerX') || change.path.includes('/centerY') // send X and Y
+				//	|| change.path.includes('/lookAngle')
+				//	//|| change.path.includes('/lookPointCoords') // send look coords
+				//)
 			);
 		});
-		setTimeout(()=>
+
+		if(changes.length > 0)
 		{
-			this.io.emit('updateEntities', changes);
-		}, this.latency);
-		
+			setTimeout(()=>
+			{
+				this.io.emit('updateEntities', changes);
+			}, this.latency);
+		}
 	}
 
 	initLoop()
