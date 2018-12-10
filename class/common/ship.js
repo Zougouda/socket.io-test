@@ -46,7 +46,7 @@ module.exports = class Ship extends require('./movable.js')
 				projectile: {
 					width: 2, 
 					height: 8, 
-					speed: 1000,
+					speed: 1200,
 					damage: 10,
 				},
 				cooldown: 50,
