@@ -1,4 +1,5 @@
 const Projectile = require('./projectile.js');
+const Weapon = require('./weapon.js');
 
 module.exports = class Ship extends require('./movable.js')
 {
@@ -40,17 +41,19 @@ module.exports = class Ship extends require('./movable.js')
 				},
 			],
 
-			weapon: 
-			{
-				shooting: false,
-				projectile: {
-					width: 2, 
-					height: 8, 
-					speed: 1200,
-					damage: 10,
-				},
-				cooldown: 50,
-			}
+			weaponOptions: 
+			[
+				{
+					projectile: {
+						width: 2, 
+						height: 8, 
+						speed: 1200,
+						damage: 10,
+						maxRange: 500,
+					},
+					cooldown: 50,
+				}
+			]
 		});
 	}
 
@@ -71,6 +74,17 @@ module.exports = class Ship extends require('./movable.js')
         this.lookPointCoords = {};
 
 		this.maxHP = this.HP;
+
+		this.weapons = [];
+		if( this.weaponOptions )
+		{
+			this.weaponOptions
+			.forEach((weaponOption)=>
+			{
+				var weaponToEquip = new Weapon(weaponOption);
+				this.equipWeapon( weaponToEquip );
+			});
+		}
     }
 
 	onAdd()
@@ -90,41 +104,20 @@ module.exports = class Ship extends require('./movable.js')
     {
         super.update(modifier);
 
-        this.turnToLookPointCoords(modifier);
-
-        /* poor shooting handling  */
-		if(this.weapon.shooting)
+		this.turnToLookPointCoords(modifier);
+		
+		this.weapons
+		.forEach((weapon) => 
 		{
-        	var now = Date.now();
-			if(
-				!this.weapon.lastShotTime 
-				|| this.weapon.lastShotTime + this.weapon.cooldown < now
-			)
-			{
-            	var bullet = new Projectile(
-					Object.assign
-					(
-						Object.create(this.weapon.projectile), 
-						{
-							owner: this,
-							centerX: this.constructor.Geometry.getXByAngleAndDistance(this.centerX, this.lookAngle, this.height/2 + this.weapon.projectile.height/2),
-							centerY: this.constructor.Geometry.getYByAngleAndDistance(this.centerY, this.lookAngle, this.height/2 + this.weapon.projectile.height/2),
-							lookAngle: this.lookAngle,
-						}
-					)
-				);
-            	bullet.addTo(this.getState(), this.getSocket());
-
-				/* TODO remove this -> auto-delete projectile after a while */
-				setTimeout(()=>
-				{
-					bullet.remove();
-				}, 500);
-
-            	this.weapon.lastShotTime = now;
-			}
-		}
-    }
+			weapon.update(modifier);
+		});
+	}
+	
+	equipWeapon(weapon)
+	{
+		this.weapons.push(weapon);
+		weapon.getOwner = ()=>{return this};
+	}
 
     /********** CLIENT FUNCTIONS **********/
 

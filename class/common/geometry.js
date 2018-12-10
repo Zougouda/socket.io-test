@@ -22,6 +22,14 @@ class Geometry
         return angle;
     }
 
+    static getDistanceBy2XY(x1, y1, x2, y2)
+    {
+        var dx = Math.pow(x2 - x1, 2);
+        var dy = Math.pow(y1 - y2, 2);
+        var distance = Math.sqrt(dx + dy);
+        return distance;
+    }
+
     static computeCosByAngle(angle)
     {
         return Math.cos(angle * Math.PI / 180);    

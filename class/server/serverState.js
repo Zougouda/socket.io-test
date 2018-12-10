@@ -77,7 +77,7 @@ module.exports = class ServerState extends require('../common/state.js')
 			{
 				try
 				{
-					this.entities[data.id].weapon.shooting = Boolean(data.value);
+					this.entities[data.id]/*.weapon*/.shooting = Boolean(data.value);
 				}
 				catch(e)
 				{

@@ -7,6 +7,7 @@ module.exports = class Projectile extends require('./movable.js')
         return Object.assign(super.defaultOptions, {
             color: 'red',
 			damage: 0,
+			maxRange: 200,
 			owner: null,
 
 			//addEvent: 'addProjectile',
@@ -17,11 +18,22 @@ module.exports = class Projectile extends require('./movable.js')
 	{
 		super.init();
 
+		this.travelledDistance = 0;
 	}
 
     update(modifier)
     {
-        this.moveByAngleAndSpeed(modifier);
+		var lastPos = {x: this.centerX, y: this.centerY};
+		this.moveByAngleAndSpeed(modifier);
+		
+		this.travelledDistance += this.constructor.Geometry.getDistanceBy2XY(
+			lastPos.x,
+			lastPos.y,
+			this.centerX,
+			this.centerY
+		);
+		if(this.travelledDistance >= this.maxRange)
+			return this.remove();
 
 		this.checkForCollision();
     }
