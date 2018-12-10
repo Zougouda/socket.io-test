@@ -16,7 +16,7 @@ module.exports = class State
 	addEntity(obj)
 	{
 		if(!obj.id)
-			obj.id = Date.now();
+			obj.id = `${Date.now()}-${Math.ceil(Math.random()*100)}`; // random uniq-ish id
 
 		this.entities[obj.id] = obj;
 	}

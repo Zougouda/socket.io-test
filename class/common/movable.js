@@ -10,6 +10,7 @@ class Movable extends require('./entity.js')
 			speed: 150, // px/s
 			rotationSpeed: 540, // deg/s
 			lookAngle: 90, // looking straight up : default angle
+			moveAngle: null,
 		});
 	}
 
@@ -20,6 +21,15 @@ class Movable extends require('./entity.js')
 	get topY()
 	{
 		return this.centerY - this.height/2;
+	}
+
+	setCenterX(value)
+	{
+		this.centerX = value;
+	}
+	setCenterY(value)
+	{
+		this.centerY = value;
 	}
 
 	init()
@@ -52,14 +62,18 @@ class Movable extends require('./entity.js')
 
 	updateByMovement(modifier)
 	{
-		this.centerX += this.movement.x * this.speed * modifier;
-		this.centerY += this.movement.y * this.speed * modifier;
+		//this.centerX += this.movement.x * this.speed * modifier;
+		this.setCenterX( this.centerX + this.movement.x * this.speed * modifier );
+		//this.centerY += this.movement.y * this.speed * modifier;
+		this.setCenterY( this.centerY + this.movement.y * this.speed * modifier );
 	}
 
 	updateByAngleAndDistance(angle, distance)
 	{
-		this.centerX += distance * this.constructor.Geometry.getXByAngle(angle);
-	    this.centerY += distance * this.constructor.Geometry.getYByAngle(angle);
+		//this.centerX += distance * this.constructor.Geometry.getXByAngle(angle);
+		this.setCenterX( this.centerX + distance * this.constructor.Geometry.getXByAngle(angle) );
+	    //this.centerY += distance * this.constructor.Geometry.getYByAngle(angle);
+		this.setCenterY( this.centerY + distance * this.constructor.Geometry.getYByAngle(angle) );
 	}
 
 	updateByAngleAndModifier(angle, modifier)
@@ -104,11 +118,11 @@ class Movable extends require('./entity.js')
 		)
 			return;
 
-		var centerX = (this.clientCoords.centerX || this.centerX), 
-			centerY = (this.clientCoords.centerY || this.centerY);
+		//var centerX = (this.clientCoords.centerX || this.centerX), 
+		//	centerY = (this.clientCoords.centerY || this.centerY);
 		var angleBetweenMeAndMouse = this.constructor.Geometry.getAngleBy2XY(
-			centerX, 
-			centerY, 
+			this.clientCenterX, 
+			this.clientCenterY, 
 			this.lookPointCoords.x, 
 			this.lookPointCoords.y
 		);

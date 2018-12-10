@@ -7,7 +7,7 @@ module.exports = class Ship extends require('./movable.js')
 		return Object.assign(super.defaultOptions, {
 			width: 42,
 			height: 60,
-			speed: 150, // px/s
+			speed: 200, // px/s
 			rotationSpeed: 540, // deg/s
 			lookAngle: 90, // looking straight up : default angle
 			HP: 100,
@@ -17,18 +17,51 @@ module.exports = class Ship extends require('./movable.js')
 
 			//addEvent: 'addShip',
 
+			reactors: [
+				{
+					distance: 30,
+					angle: 12,
+					cooldown: 15,
+					particle: {
+						speed: 1,
+						duration: 150,
+						radius: 4,
+					}
+				},
+				{
+					distance: 30,
+					angle: -12,
+					cooldown: 15,
+					particle: {
+						speed: 1,
+						duration: 150,
+						radius: 4,
+					}
+				},
+			],
+
 			weapon: 
 			{
 				shooting: false,
 				projectile: {
 					width: 2, 
 					height: 8, 
-					speed: 750,
+					speed: 1000,
 					damage: 10,
 				},
-				cooldown: 100,
+				cooldown: 50,
 			}
 		});
+	}
+
+	/* Don't get out of the screen */
+	setCenterX(value)
+	{
+		this.centerX = Math.min( Math.max( value, 0  ), this.getState().canvasWidth );
+	}
+	setCenterY(value)
+	{
+		this.centerY = Math.min( Math.max( value, 0  ), this.getState().canvasHeight );
 	}
 
     init()
@@ -86,7 +119,7 @@ module.exports = class Ship extends require('./movable.js')
 				setTimeout(()=>
 				{
 					bullet.remove();
-				}, 1000);
+				}, 500);
 
             	this.weapon.lastShotTime = now;
 			}
@@ -95,32 +128,87 @@ module.exports = class Ship extends require('./movable.js')
 
     /********** CLIENT FUNCTIONS **********/
 
+	/* don't get offscreen ! */
+	get clientCenterX()
+	{
+		var x = super.clientCenterX;
+		return Math.min( Math.max( x, 0  ), this.getState().canvasWidth );
+	}
+	get clientCenterY()
+	{
+		var y = super.clientCenterY;
+		return Math.min( Math.max( y, 0  ), this.getState().canvasHeight );
+	}
+
+	get shortName()
+	{
+		if(!this.name)
+			return '';
+
+		String.prototype.trunc = String.prototype.trunc ||
+		function(n)
+		{
+			return (this.length > n) ? this.substr(0, n-1) + '...' : this;
+	    };
+
+		return this.name.trunc( 16 );
+	}
 
 	draw(ctx)
 	{
 		super.draw(ctx);
 
 		/* write player's name if has one */
-		if(this.name)
+		if(this.shortName)
 		{
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'top';
-			ctx.font = '12px Arial';
-			var colorByRemainingHP = commonClasses.Graphic.getDynamicColor({
+			ctx.font = 'bold 16px Arial';
+			var colorByRemainingHP = clientClasses.Graphic.getDynamicColor({
 				startColor: [0, 130, 0],
 				endColor: [255, 0, 0],
 				ratio: this.HP / this.maxHP,
 				opacity: 1,
 			});
 			ctx.fillStyle = colorByRemainingHP;
-			ctx.fillText(this.name, this.clientCenterX, this.clientCenterY + this.height/2)
+			ctx.fillText(this.shortName, this.clientCenterX, this.clientCenterY + this.height/2)
 		}
 	}
     
     updateClient(modifier)
 	{
 		super.updateClient(modifier);
-		// this.turnToLookPointCoords(modifier);
+
+		/* create reactor's particles */
+		var now = Date.now();
+
+		this.reactors.forEach( (reactor)=>
+		{
+			if(
+				!reactor.lastShotTime 
+				|| reactor.lastShotTime + reactor.cooldown < now
+			)
+			{
+				reactor.lastShotTime = now;
+				var particle = new clientClasses.Particle(
+					Object.assign(
+						reactor.particle, 
+						{
+							centerX: this.constructor.Geometry.getXByAngleAndDistance(
+								this.clientCenterX, 
+								this.constructor.Geometry.getReverseAngle(this.lookAngle + reactor.angle), reactor.distance
+							),
+							centerY: this.constructor.Geometry.getYByAngleAndDistance(
+								this.clientCenterY, 
+								this.constructor.Geometry.getReverseAngle(this.lookAngle + reactor.angle), reactor.distance
+							),
+							moveAngle: this.constructor.Geometry.getReverseAngle(this.lookAngle),
+						}
+					)
+				)
+				.addTo(this.getState());
+			}
+		} );
 	}
 
 	setAxisMovement(axis, value)

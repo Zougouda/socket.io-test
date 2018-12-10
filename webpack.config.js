@@ -7,7 +7,8 @@ module.exports =
     {
         ClientState: './class/client/clientState.js',
         //Movable: './class/common/movable.js',
-		commonClasses: './class/common/index.js'
+        commonClasses: './class/common/index.js',
+        clientClasses: './class/client/index.js',
     },
     //mode: 'production',
     mode: 'development',

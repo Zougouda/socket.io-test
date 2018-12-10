@@ -41,6 +41,11 @@ module.exports = class Geometry
     {
         return (y + this.getYByAngle(angle) * distance);
     }
+    static getReverseAngle(angle)
+    {
+        var newAngle = (angle + 180) % 360;
+        return newAngle;
+    }
 
     /**
      * Linear Interpolation method
