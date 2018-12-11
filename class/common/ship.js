@@ -1,5 +1,5 @@
-const Projectile = require('./projectile.js');
 const Weapon = require('./weapon.js');
+const Reactor = require('../client/reactor.js');
 
 module.exports = class Ship extends require('./movable.js')
 {
@@ -18,7 +18,7 @@ module.exports = class Ship extends require('./movable.js')
 
 			//addEvent: 'addShip',
 
-			reactors: [
+			reactorOptions: [
 				{
 					distance: 30,
 					angle: 12,
@@ -85,6 +85,17 @@ module.exports = class Ship extends require('./movable.js')
 				this.equipWeapon( weaponToEquip );
 			});
 		}
+
+		this.reactors = [];
+		if(typeof window !== 'undefined' && this.reactorOptions )
+		{
+			this.reactorOptions
+			.forEach((reactorOption)=>
+			{
+				var reactorToEquip = new Reactor(reactorOption);
+				this.equipReactor( reactorToEquip );
+			});
+		}
     }
 
 	onAdd()
@@ -117,6 +128,12 @@ module.exports = class Ship extends require('./movable.js')
 	{
 		this.weapons.push(weapon);
 		weapon.getOwner = ()=>{return this};
+	}
+
+	equipReactor(reactor)
+	{
+		this.reactors.push(reactor);
+		reactor.getOwner = ()=>{return this};
 	}
 
     /********** CLIENT FUNCTIONS **********/
@@ -172,36 +189,11 @@ module.exports = class Ship extends require('./movable.js')
 	{
 		super.updateClient(modifier);
 
-		/* create reactor's particles */
-		var now = Date.now();
-
-		this.reactors.forEach( (reactor)=>
+		this.reactors
+		.forEach( (reactor)=>
 		{
-			if(
-				!reactor.lastShotTime 
-				|| reactor.lastShotTime + reactor.cooldown < now
-			)
-			{
-				reactor.lastShotTime = now;
-				var particle = new clientClasses.Particle(
-					Object.assign(
-						reactor.particle, 
-						{
-							centerX: this.constructor.Geometry.getXByAngleAndDistance(
-								this.clientCenterX, 
-								this.constructor.Geometry.getReverseAngle(this.lookAngle + reactor.angle), reactor.distance
-							),
-							centerY: this.constructor.Geometry.getYByAngleAndDistance(
-								this.clientCenterY, 
-								this.constructor.Geometry.getReverseAngle(this.lookAngle + reactor.angle), reactor.distance
-							),
-							moveAngle: this.constructor.Geometry.getReverseAngle(this.lookAngle),
-						}
-					)
-				)
-				.addTo(this.getState());
-			}
-		} );
+			reactor.update(modifier);
+		});
 	}
 
 	setAxisMovement(axis, value)

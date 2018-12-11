@@ -45,6 +45,11 @@ module.exports = class Weapon extends require('./entity.js')
         }
     }
 
+	draw(ctx)
+	{
+		// TODO
+	}
+
     shoot()
     {
         var myOwner = this.getOwner();
