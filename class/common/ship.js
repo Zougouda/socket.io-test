@@ -258,13 +258,13 @@ module.exports = class Ship extends require('./movable.js')
 
 	draw(ctx)
 	{
+		super.draw(ctx);
+
 		this.weapons
 		.forEach( (weapon)=>
 		{
 			weapon.draw(ctx);
 		});
-
-		super.draw(ctx);
 
 		/* write player's name if has one */
 		if(this.shortName)

@@ -15,6 +15,8 @@ module.exports = class Weapon extends require('./movable.js')
 			height: 24,
 			lookAngle: 90,
 
+			onTop: false,
+
             cooldown: 100,
             projectileNb: 1,
 			projectilesDeviation: 0,
@@ -133,5 +135,14 @@ module.exports = class Weapon extends require('./movable.js')
             Geometry.normalizeAngle(myOwner.lookAngle + this.angle), 
             this.distance
         );
+	}
+
+	draw(ctx)
+	{
+		var ctxOptions = {};
+		if(!this.onTop)
+			ctxOptions.globalCompositeOperation = 'destination-over';
+
+		super.draw(ctx, ctxOptions);
 	}
 };
