@@ -8,6 +8,7 @@ module.exports = class State
 		this.debug = options.debug || false;
 
 		this.entities = {};
+		this.groups = {};
 
 		this.canvasWidth = 1024; 
 		this.canvasHeight = 768;
@@ -19,10 +20,31 @@ module.exports = class State
 			obj.id = `${Date.now()}-${Math.ceil(Math.random()*100)}`; // random uniq-ish id
 
 		this.entities[obj.id] = obj;
+
+		if(obj.groups)
+		{
+			obj.groups.forEach((groupName)=>
+			{
+				if(!this.groups[groupName])
+					this.groups[groupName] = {};
+				this.groups[groupName][obj.id] = obj;
+			});
+		}
 	}
 
 	removeEntity(id)
 	{
+		if(!this.entities[id])
+			return;
+
+		if(this.entities[id].groups)
+		{
+			this.entities[id].groups.forEach((groupName)=>
+			{
+				delete this.groups[groupName][id];
+			});
+		}
+
 		delete this.entities[id];
 	}
 

@@ -5,6 +5,8 @@ module.exports = class Projectile extends require('./movable.js')
     get defaultOptions()
     {
         return Object.assign(super.defaultOptions, {
+			groups: ['projectiles'],
+			
 			//spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/projectile/1.png',
 			spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/projectile/blue-beam.png',
 
@@ -48,14 +50,12 @@ module.exports = class Projectile extends require('./movable.js')
 
 	checkForCollision()
 	{
-		Object.entries( this.getState().entities ).forEach(([id, obj])=>
+		Object.entries( this.getState().groups['ships'] ).forEach(([id, obj])=>
 		{
-			if( (this.owner && this.owner.id === obj.id) || !obj.HP)
-				return;
-			
 			if(Collision.checkCollisionBetween2rectangles(this, obj))
 			{
 				var damagesToInflict = this.damage;
+				this.remove();
 				obj.takeDamages(damagesToInflict);
 			}
 		});

@@ -7,6 +7,8 @@ module.exports = class Ship extends require('./movable.js')
     get defaultOptions()
 	{
 		return Object.assign(super.defaultOptions, {
+			groups: ['ships'],
+
 			width: 42,
 			height: 60,
 
@@ -221,38 +223,35 @@ module.exports = class Ship extends require('./movable.js')
 
 	checkForCollision()
 	{
-		Object.entries( this.getState().entities ).forEach(([id, obj])=>
+		Object.entries( this.getState().groups['ships'] ).forEach(([id, obj])=>
 		{
 			if(obj.id === this.id) // don't enter in colision with yourself XD
 				return;
-			if( (this.owner && this.owner.id === obj.id) || !obj.HP)
+			if(!Collision.checkCollisionBetween2rectangles(this, obj))
 				return;
-			
-			if(Collision.checkCollisionBetween2rectangles(this, obj))
+
+			/* Push the other ship away based on my own vector */
+			if(obj.moveVector)
 			{
-				/* Push the other ship away based on my own vector */
-				if(obj.moveVector)
-				{
-					obj.moveVector = this.constructor.Geometry.sum2vectors(
-						this.moveVector.angle, 
-						this.moveVector.speed, 
-						obj.moveVector.angle, 
-						obj.moveVector.speed, 
-					);
-				}
-
-				/* Crash! Take my damages */
-				var damageInflictedToOtherShip = this.maxHP/2 * this.moveVector.speed / this.maxSpeed;
-				obj.takeDamages(damageInflictedToOtherShip);
-
-				/* Bounce me back as well */
-				this.moveVector = this.constructor.Geometry.sum2vectors(
+				obj.moveVector = this.constructor.Geometry.sum2vectors(
 					this.moveVector.angle, 
 					this.moveVector.speed, 
-					this.constructor.Geometry.getReverseAngle(obj.moveVector.angle), 
-					this.moveVector.speed *1.5,
+					obj.moveVector.angle, 
+					obj.moveVector.speed, 
 				);
 			}
+
+			/* Crash! Take my damages */
+			var damageInflictedToOtherShip = this.maxHP/2 * this.moveVector.speed / this.maxSpeed;
+			obj.takeDamages(damageInflictedToOtherShip);
+
+			/* Bounce me back as well */
+			this.moveVector = this.constructor.Geometry.sum2vectors(
+				this.moveVector.angle, 
+				this.moveVector.speed, 
+				this.constructor.Geometry.getReverseAngle(obj.moveVector.angle), 
+				this.moveVector.speed *1.5,
+			);
 		});
 	}
 
