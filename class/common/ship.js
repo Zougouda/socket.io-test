@@ -223,7 +223,7 @@ module.exports = class Ship extends require('./movable.js')
 
 	checkForCollision()
 	{
-		Object.entries( this.getState().groups['ships'] ).forEach(([id, obj])=>
+		Object.values( this.getState().groups['ships'] ).forEach((obj)=>
 		{
 			if(obj.id === this.id) // don't enter in colision with yourself XD
 				return;
