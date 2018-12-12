@@ -52,12 +52,12 @@ module.exports = class Projectile extends require('./movable.js')
 	{
 		Object.entries( this.getState().groups['ships'] ).forEach(([id, obj])=>
 		{
-			if(Collision.checkCollisionBetween2rectangles(this, obj))
-			{
-				var damagesToInflict = this.damage;
-				this.remove();
-				obj.takeDamages(damagesToInflict);
-			}
+			if(!Collision.checkCollisionBetween2rectangles(this, obj))
+				return;
+				
+			var damagesToInflict = this.damage;
+			this.remove();
+			obj.takeDamages(damagesToInflict);
 		});
 	}
 
