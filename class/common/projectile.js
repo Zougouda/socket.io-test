@@ -55,10 +55,8 @@ module.exports = class Projectile extends require('./movable.js')
 			
 			if(Collision.checkCollisionBetween2rectangles(this, obj))
 			{
-				obj.HP -= this.damage;
-				this.remove();
-				if( obj.HP <= 0)
-					obj.remove();
+				var damagesToInflict = this.damage;
+				obj.takeDamages(damagesToInflict);
 			}
 		});
 	}

@@ -1,5 +1,6 @@
 const Weapon = require('./weapon.js');
 const Reactor = require('../client/reactor.js');
+const Collision = require('./collision.js');
 
 module.exports = class Ship extends require('./movable.js')
 {
@@ -214,6 +215,52 @@ module.exports = class Ship extends require('./movable.js')
 		{
 			weapon.update(modifier);
 		});
+
+		this.checkForCollision();
+	}
+
+	checkForCollision()
+	{
+		Object.entries( this.getState().entities ).forEach(([id, obj])=>
+		{
+			if(obj.id === this.id) // don't enter in colision with yourself XD
+				return;
+			if( (this.owner && this.owner.id === obj.id) || !obj.HP)
+				return;
+			
+			if(Collision.checkCollisionBetween2rectangles(this, obj))
+			{
+				/* Push the other ship away based on my own vector */
+				if(obj.moveVector)
+				{
+					obj.moveVector = this.constructor.Geometry.sum2vectors(
+						this.moveVector.angle, 
+						this.moveVector.speed, 
+						obj.moveVector.angle, 
+						obj.moveVector.speed, 
+					);
+				}
+
+				/* Crash! Take my damages */
+				var damageInflictedToOtherShip = this.maxHP/2 * this.moveVector.speed / this.maxSpeed;
+				obj.takeDamages(damageInflictedToOtherShip);
+
+				/* Bounce me back as well */
+				this.moveVector = this.constructor.Geometry.sum2vectors(
+					this.moveVector.angle, 
+					this.moveVector.speed, 
+					this.constructor.Geometry.getReverseAngle(obj.moveVector.angle), 
+					this.moveVector.speed *1.5,
+				);
+			}
+		});
+	}
+
+	takeDamages(amount)
+	{
+		this.HP -= amount;
+		if( this.HP <= 0)
+			this.remove();
 	}
 	
 	equipWeapon(weapon)
