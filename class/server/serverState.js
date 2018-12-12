@@ -51,15 +51,26 @@ module.exports = class ServerState extends require('../common/state.js')
 				if(playerShip)
 					playerShip.remove();
 			})
-			.on('setAxisMovement', (data)=>
+			//.on('setAxisMovement', (data)=>
+			//{
+			//	try
+			//	{
+			//		this.entities[data.id].movement[data.axis] = Math.max(Math.min(data.value, 1), -1); // -1 >= movementValue =< 1
+			//	}
+			//	catch(e)
+			//	{
+			//		console.warn(e);		
+			//	}
+			//})
+			.on('thrustingDirection', (data)=>
 			{
 				try
 				{
-					this.entities[data.id].movement[data.axis] = Math.max(Math.min(data.value, 1), -1); // -1 >= movementValue =< 1
+					this.entities[data.id].thrusting[data.side] = data.value;
 				}
 				catch(e)
 				{
-					console.warn(e);		
+					console.warn(e);
 				}
 			})
 			.on('setLookPointCoords', (data)=>

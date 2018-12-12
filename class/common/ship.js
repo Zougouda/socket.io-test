@@ -8,8 +8,16 @@ module.exports = class Ship extends require('./movable.js')
 		return Object.assign(super.defaultOptions, {
 			width: 42,
 			height: 60,
-			speed: 200, // px/s
+
+			speed: 400, // px/s
+			thrust: {
+				forward: 60,
+				backward: 20,
+				left: 20,
+				right: 20,
+			},
 			rotationSpeed: 540, // deg/s
+
 			lookAngle: 90, // looking straight up : default angle
 			HP: 100,
 			spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/ship/spaceship.png',
@@ -45,14 +53,38 @@ module.exports = class Ship extends require('./movable.js')
 			[
 				{
 					projectile: {
-						width: 2, 
-						height: 8, 
+						width: 4, 
+						height: 16, 
 						speed: 1200,
 						damage: 10,
-						maxRange: 500,
+						maxRange: 600,
 					},
-					cooldown: 50,
-				}
+					cooldown: 100,
+
+					distance: 15,
+					angle: -110,
+
+					width: 4,
+					height: 24,
+					lookAngle: 90,
+				},
+				{
+					projectile: {
+						width: 4, 
+						height: 16, 
+						speed: 1200,
+						damage: 10,
+						maxRange: 600,
+					},
+					cooldown: 100,
+
+					distance: 15,
+					angle: 110,
+
+					width: 4,
+					height: 24,
+					lookAngle: 90,
+				},
 			]
 		});
 	}
@@ -60,11 +92,22 @@ module.exports = class Ship extends require('./movable.js')
 	/* Don't get out of the screen */
 	setCenterX(value)
 	{
-		this.centerX = Math.min( Math.max( value, 0  ), this.getState().canvasWidth );
+		this.centerX = value;
+		if(this.centerX < 0 || this.centerX > this.getState().canvasWidth )
+		{
+			this.centerX = Math.min( Math.max( value, 0  ), this.getState().canvasWidth );
+			this.moveVector.speed = 0;
+		}
+
 	}
 	setCenterY(value)
 	{
-		this.centerY = Math.min( Math.max( value, 0  ), this.getState().canvasHeight );
+		this.centerY = value;
+		if(this.centerY < 0 || this.centerY > this.getState().canvasHeight )
+		{
+			this.centerY = Math.min( Math.max( value, 0  ), this.getState().canvasHeight );
+			this.moveVector.speed = 0;
+		}
 	}
 
     init()
@@ -74,6 +117,14 @@ module.exports = class Ship extends require('./movable.js')
         this.lookPointCoords = {};
 
 		this.maxHP = this.HP;
+
+		/* TODO better */
+		this.thrusting = {
+			forward: false,
+			backward: false,
+			left: false,
+			right: false,
+		};
 
 		this.weapons = [];
 		if( this.weaponOptions )
@@ -113,7 +164,48 @@ module.exports = class Ship extends require('./movable.js')
 
     update(modifier)
     {
-        super.update(modifier);
+		/* update moveVector */
+		Object.entries(this.thrusting)
+		.forEach(([direction, value])=>
+		{
+			if(value)
+			{
+				var angleToApply;
+				var speedToApply = this.thrust[direction];
+				switch(direction)
+				{
+					case 'forward':
+						angleToApply = this.lookAngle;
+					break;
+					case 'backward':
+						angleToApply = this.constructor.Geometry.getReverseAngle(this.moveVector.angle);
+					break;
+					case 'right':
+						angleToApply = this.lookAngle - 90;
+						if( angleToApply < 0)
+							angleToApply += 360;
+						//console.log('left', angleToApply);
+					break;
+					case 'left': 
+						angleToApply = (this.lookAngle + 90) % 360;
+						//console.log('right', angleToApply);
+					break;
+				}
+
+				this.moveVector = this.constructor.Geometry.sum2vectors(
+					this.moveVector.angle, 
+					this.moveVector.speed, 
+					angleToApply, 
+					speedToApply
+				);
+			}
+		});
+		this.moveVector.speed = Math.max(0, Math.min(this.moveVector.speed, this.maxSpeed ) );
+
+        //super.update(modifier);
+		this.moveByVector(modifier);
+
+		this.moveVector.speed = Math.max(0, this.moveVector.speed -3); // moveVector decay
 
 		this.turnToLookPointCoords(modifier);
 		
@@ -166,6 +258,12 @@ module.exports = class Ship extends require('./movable.js')
 
 	draw(ctx)
 	{
+		this.weapons
+		.forEach( (weapon)=>
+		{
+			weapon.draw(ctx);
+		});
+
 		super.draw(ctx);
 
 		/* write player's name if has one */
@@ -240,19 +338,39 @@ module.exports = class Ship extends require('./movable.js')
 			{
 				case 90: // Z
                 case 38: // up
-					this.addAxisMovement('y', -1);
+					//this.addAxisMovement('y', -1);
+					this.getState().socket.emit('thrustingDirection', {
+						id: this.id,
+						side: 'forward',
+						value: 1,
+					});
 				break;
 				case 83: // S
 				case 40: // down
-					this.addAxisMovement('y', 1);
+					//this.addAxisMovement('y', 1);
+					this.getState().socket.emit('thrustingDirection', {
+						id: this.id,
+						side: 'backward',
+						value: 1,
+					});
 				break;
 				case 81: // Q
 				case 37: // left
-					this.addAxisMovement('x', -1);
+					//this.addAxisMovement('x', -1);
+					this.getState().socket.emit('thrustingDirection', {
+						id: this.id,
+						side: 'left',
+						value: 1,
+					});
 				break;
 				case 68: // D
 				case 39: //right
-					this.addAxisMovement('x', 1);
+					//this.addAxisMovement('x', 1);
+					this.getState().socket.emit('thrustingDirection', {
+						id: this.id,
+						side: 'right',
+						value: 1,
+					});
 				break;
 			}
 		}, false);
@@ -263,19 +381,39 @@ module.exports = class Ship extends require('./movable.js')
 			{
 				case 90: // Z
 				case 38: // up
-					this.addAxisMovement('y', 1);
+					//this.addAxisMovement('y', 1);
+					this.getState().socket.emit('thrustingDirection', {
+						id: this.id,
+						side: 'forward',
+						value: 0,
+					});
 				break;
 				case 83: // S
 				case 40: // down
-					this.addAxisMovement('y', -1);
+					//this.addAxisMovement('y', -1);
+					this.getState().socket.emit('thrustingDirection', {
+						id: this.id,
+						side: 'backward',
+						value: 0,
+					});
 				break;
 				case 81: // Q
 				case 37: // left
-						this.addAxisMovement('x', 1);
+					//this.addAxisMovement('x', 1);
+					this.getState().socket.emit('thrustingDirection', {
+						id: this.id,
+						side: 'left',
+						value: 0,
+					});
 				break;
 				case 68: // D
 				case 39: //right
-						this.addAxisMovement('x', -1);
+					//this.addAxisMovement('x', -1);
+					this.getState().socket.emit('thrustingDirection', {
+						id: this.id,
+						side: 'right',
+						value: 0,
+					});
 				break;
 			}
 		}, false);

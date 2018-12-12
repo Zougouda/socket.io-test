@@ -5,6 +5,9 @@ module.exports = class Projectile extends require('./movable.js')
     get defaultOptions()
     {
         return Object.assign(super.defaultOptions, {
+			//spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/projectile/1.png',
+			spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/projectile/blue-beam.png',
+
             color: 'red',
 			damage: 0,
 			maxRange: 200,
@@ -19,6 +22,7 @@ module.exports = class Projectile extends require('./movable.js')
 		super.init();
 
 		this.travelledDistance = 0;
+		this.opacity = 1;
 	}
 
     update(modifier)
@@ -32,6 +36,10 @@ module.exports = class Projectile extends require('./movable.js')
 			this.centerX,
 			this.centerY
 		);
+
+		var remainingLifeRatio = Math.min(1, (this.maxRange - this.travelledDistance) / this.maxRange );
+		this.opacity = remainingLifeRatio;
+
 		if(this.travelledDistance >= this.maxRange)
 			return this.remove();
 
@@ -59,14 +67,6 @@ module.exports = class Projectile extends require('./movable.js')
 
 	draw(ctx)
 	{
-		this.rotateContextByLookAngle(ctx); // rotate ctx ...
-		ctx.fillStyle = this.color;
-		ctx.fillRect(
-			-this.width/2,
-			-this.height/2,
-			this.width,
-			this.height,
-		);
-		ctx.restore(); // ... and restore it !
+		super.draw(ctx, {globalAlpha: this.opacity});
 	}
 }

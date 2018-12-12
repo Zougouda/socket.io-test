@@ -1,5 +1,12 @@
 class Geometry
 {
+	static normalizeAngle(angle)
+	{
+		while(angle < 0)
+			angle += 360;
+		return angle % 360;
+	}
+
     static getDistanceBy2XY(x1, y1, x2, y2)
     {
         var dx = Math.pow(x2 - x1, 2);
@@ -29,6 +36,45 @@ class Geometry
         var distance = Math.sqrt(dx + dy);
         return distance;
     }
+
+	static getDeltaBetweenAngles(angle1, angle2)
+	{
+		var angleDelta = (angle2 % 360) - (angle1 % 360);
+		if (angleDelta < (-180))
+			angleDelta += 360;
+		else if (angleDelta > 180)
+			angleDelta -= 360;
+
+		return angleDelta;
+	}
+
+	static sum2vectors(angle1, speed1, angle2, speed2)
+	{
+		var x1 = this.getXByAngleAndDistance(0, angle1, speed1);
+		var y1 = this.getYByAngleAndDistance(0, angle1, speed1);
+
+		var x2 = this.getXByAngleAndDistance(0, angle2, speed2);
+		var y2 = this.getYByAngleAndDistance(0, angle2, speed2);
+
+		//result vector
+		var xR = x1 + x2;
+		var yR = y1 + y2;
+
+		var speedR = this.getDistanceBy2XY(0, 0, xR, yR);
+		var angleR = this.getAngleBy2XY(0, 0, xR, yR);
+
+		//Hack to counter angle flooring START
+		// var angleDelta = this.getDeltaBetweenAngles(angle1, angle2);
+		//if destination angle if at the left
+		// if (angleDelta > 0)
+		// 	angleR++;
+		//Hack END
+
+		return {
+			speed: speedR,
+		  	angle: angleR
+		};
+	}
 
     static computeCosByAngle(angle)
     {

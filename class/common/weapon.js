@@ -1,26 +1,60 @@
 const Projectile = require('./projectile.js');
 const Geometry = require('./geometry.js');
 
-module.exports = class Weapon extends require('./entity.js')
+module.exports = class Weapon extends require('./movable.js')
 {
     get defaultOptions()
     {
         return {
+			spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/weapon/test-weapon.png',
+
+			distance: 30,
+			angle: 0,
+
+			width: 4,
+			height: 24,
+			lookAngle: 90,
+
             cooldown: 100,
             projectileNb: 1,
+			projectilesDeviation: 0,
             projectile: {}
         };
     }
     
     init()
     {
+		super.init();
         this.lastShotTime = Date.now();
     }
 
     getOwner()
     {
-        return null;
+        return null; // to be overriden
     }
+
+	get centerX()
+	{
+		var myOwner = this.getOwner();
+		if(!myOwner) 
+			return;
+        return Geometry.getXByAngleAndDistance(
+            myOwner.centerX, 
+            Geometry.normalizeAngle(myOwner.lookAngle + this.angle), 
+            this.distance
+        );
+	}
+	get centerY()
+	{
+		var myOwner = this.getOwner();
+		if(!myOwner) 
+			return;
+        return Geometry.getYByAngleAndDistance(
+            myOwner.centerY, 
+            Geometry.normalizeAngle(myOwner.lookAngle + this.angle), 
+            this.distance
+        );
+	}
 
     equipTo(shipObj)
     {
@@ -34,6 +68,8 @@ module.exports = class Weapon extends require('./entity.js')
 
     update(modifier)
     {
+		this.lookAngle = this.getOwner().lookAngle;
+
         if(!this.getOwner().shooting)
             return;
 
@@ -44,11 +80,6 @@ module.exports = class Weapon extends require('./entity.js')
             this.shoot();
         }
     }
-
-	draw(ctx)
-	{
-		// TODO
-	}
 
     shoot()
     {
@@ -61,21 +92,46 @@ module.exports = class Weapon extends require('./entity.js')
                     Object.create(this.projectile), 
                     {
                         owner: myOwner,
-                        centerX: Geometry.getXByAngleAndDistance(
-                            myOwner.centerX, 
-                            myOwner.lookAngle, 
-                            myOwner.height/2 + this.projectile.height/2
-                        ),
-                        centerY: Geometry.getYByAngleAndDistance(
-                            myOwner.centerY, 
-                            myOwner.lookAngle, 
-                            myOwner.height/2 + this.projectile.height/2
-                        ),
-                        lookAngle: myOwner.lookAngle,
+						centerX: Geometry.getXByAngleAndDistance(
+        				    this.centerX, 
+        				    this.lookAngle, 
+        				    this.projectile.height / 2 + this.height / 2
+        				),
+						centerY: Geometry.getYByAngleAndDistance(
+        				    this.centerY, 
+        				    this.lookAngle, 
+        				    this.projectile.height / 2 + this.height / 2
+        				),
+                        lookAngle: this.lookAngle,
                     }
                 )
             );
             bullet.addTo(myOwner.getState(), myOwner.getSocket());
         }
     }
+
+    /********** CLIENT FUNCTIONS **********/
+
+	get clientCenterX()
+	{
+		var myOwner = this.getOwner();
+		if(!myOwner) 
+			return;
+        return Geometry.getXByAngleAndDistance(
+            myOwner.clientCenterX, 
+            Geometry.normalizeAngle(myOwner.lookAngle + this.angle), 
+            this.distance
+        );
+	}
+	get clientCenterY()
+	{
+		var myOwner = this.getOwner();
+		if(!myOwner) 
+			return;
+        return Geometry.getYByAngleAndDistance(
+            myOwner.clientCenterY, 
+            Geometry.normalizeAngle(myOwner.lookAngle + this.angle), 
+            this.distance
+        );
+	}
 };

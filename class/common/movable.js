@@ -38,10 +38,18 @@ class Movable extends require('./entity.js')
 		// if(!this.color)
 		// 	this.color = colors[ Math.floor(Math.random() * colors.length) ];
 
+		this.maxSpeed = this.speed;
+
 		this.movement = {
 			x: 0,
 			y: 0,
 		};
+
+		this.moveVector = {
+			angle: 90,
+			speed: 0,
+		};
+
 		this.clientCoords = {}; // this obj contains client-only vars used for interpolation
 
 		/* Client behaviour */
@@ -84,6 +92,16 @@ class Movable extends require('./entity.js')
 	moveByAngleAndSpeed(modifier)
 	{
 		this.updateByAngleAndModifier(this.lookAngle, modifier);
+	}
+
+	moveByVector(modifier)
+	{
+		return this.updateByAngleAndDistance(this.moveVector.angle, this.moveVector.speed * modifier);
+	}
+
+	updateMoveVector(newVector)
+	{
+		
 	}
 
 	updateLookAngle(modifier, angleToReach)
@@ -153,9 +171,15 @@ class Movable extends require('./entity.js')
 		ctx.rotate(rotationRadian);
 	}
 
-	draw(ctx)
+	draw(ctx, ctxOptions = {})
 	{
 		this.rotateContextByLookAngle(ctx); // rotate ctx ...
+		
+		Object.entries(ctxOptions).forEach( ([property, value])=>
+		{
+			ctx[property] = value;
+		});
+
 		ctx.drawImage(
 			this.sprite,
 			-this.width/2,
