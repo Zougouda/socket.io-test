@@ -28,13 +28,11 @@ module.exports = class ServerState extends require('../common/state.js')
 			var playerShip = null;
 
 			/* retrieve every player and ship on connect */
-			Object.entries(this.entities).forEach( ([id, obj])=>
+			Object.values(this.entities)
+			.concat( Object.values(this.players) )
+			.forEach( (obj)=>
 			{
-				obj.emitAdd(socket); // send all others existing objects to client
-			});
-			Object.entries(this.players).forEach( ([id, obj])=>
-			{
-				obj.emitAdd(socket); // send all others existing objects to client
+				obj.emitAdd(socket);
 			});
 
 			socket
