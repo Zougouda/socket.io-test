@@ -26,7 +26,8 @@ module.exports = class Weapon extends require('./movable.js')
     
     init()
     {
-		super.init();
+        super.init();
+        this.shooting = false;
         this.lastShotTime = Date.now();
     }
 
@@ -72,7 +73,7 @@ module.exports = class Weapon extends require('./movable.js')
     {
 		this.lookAngle = this.getOwner().lookAngle;
 
-        if(!this.getOwner().shooting)
+        if(!this.shooting)
             return;
 
         var now = Date.now();

@@ -64,12 +64,12 @@ module.exports = class Ship extends require('./movable.js')
 					cooldown: 100,
 
 					distance: 15,
-					angle: -110,
+					angle: 110,
 
 					width: 4,
 					height: 24,
 					lookAngle: 90,
-				},
+				},				
 				{
 					projectile: {
 						width: 4, 
@@ -81,7 +81,7 @@ module.exports = class Ship extends require('./movable.js')
 					cooldown: 100,
 
 					distance: 15,
-					angle: 110,
+					angle: -110,
 
 					width: 4,
 					height: 24,
@@ -340,6 +340,14 @@ module.exports = class Ship extends require('./movable.js')
 		.forEach( (reactor)=>
 		{
 			reactor.update(modifier);
+		});
+	}
+
+	toggleWeapons(weaponIDs = null)
+	{
+		this.getState().socket.emit('toggleWeaponsShooting', {
+			id: this.id,
+			weaponIDs,
 		});
 	}
 

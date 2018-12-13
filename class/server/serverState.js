@@ -82,11 +82,17 @@ module.exports = class ServerState extends require('../common/state.js')
 					this.logErr(e);	
 				}
 			})
-			.on('isShooting', (data)=>
+			.on('toggleWeaponsShooting', (data)=>
 			{
 				try
 				{
-					this.entities[data.id].shooting = Boolean(data.value);
+					var ship = this.entities[data.id];
+					var weaponIDs = data.weaponIDs || Object.keys(ship.weapons);
+					weaponIDs.forEach( (weaponID)=>
+					{
+						var weapon = ship.weapons[weaponID];
+						weapon.shooting = !weapon.shooting;
+					} );
 				}
 				catch(e)
 				{

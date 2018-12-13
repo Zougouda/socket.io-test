@@ -15,6 +15,21 @@ class Player extends require('./entity.js')
 		return this.getState().entities[this.shipID];
 	}
 
+	getAssignment()
+	{
+		var result = null;
+		var ship = this.getShip();
+		if(ship)
+		{
+			Object.entries(ship.playerCrew).forEach( ([assignment, playerID])=>
+			{
+				if( playerID === this.id )
+					result = assignment;
+			} );		
+		}
+		return result;
+	}
+
     /********** CLIENT FUNCTIONS **********/
 
 	giveControls(domContainer)
@@ -144,21 +159,19 @@ class Player extends require('./entity.js')
 
 		this.onMouseDown = (e)=>
 		{
-			clientState.socket.emit('isShooting', {
-				id: myShip.id,
-				value: true,
-			});
+			if(e.which === 1) // left mouse button
+				this.getShip().toggleWeapons([0]);
+			else if(e.which === 3) // right mouse button
+				this.getShip().toggleWeapons([1]);
 		};
 		domContainer.addEventListener('mousedown', this.onMouseDown);
+		domContainer.addEventListener('mouseup', this.onMouseUp || this.onMouseDown);
 
-		this.onMouseUp = (e)=>
+		/* disable default right click context menu */
+		domContainer.addEventListener('contextmenu', (e)=>
 		{
-			clientState.socket.emit('isShooting', {
-				id: myShip.id,
-				value: false,
-			});
-		};
-		domContainer.addEventListener('mouseup', this.onMouseUp);
+			e.preventDefault();
+		});
 	}
 
 	onAdd()
