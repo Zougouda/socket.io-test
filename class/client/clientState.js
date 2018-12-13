@@ -123,8 +123,7 @@ module.exports = class ClientState extends require('../common/state.js')
 		}
 		catch(e)
 		{
-			 if(this.debug && console.warn)
-			 	console.warn(e);
+			 this.logErr(e);
 		}
 	}
 }

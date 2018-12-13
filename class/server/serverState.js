@@ -1,4 +1,3 @@
-//const Movable = require('../common/movable.js');
 const commonClasses = require('../common/index.js');
 
 module.exports = class ServerState extends require('../common/state.js')
@@ -71,7 +70,7 @@ module.exports = class ServerState extends require('../common/state.js')
 				}
 				catch(e)
 				{
-					console.warn(e);
+					this.logErr(e);
 				}
 			})
 			.on('setLookPointCoords', (data)=>
@@ -82,18 +81,18 @@ module.exports = class ServerState extends require('../common/state.js')
 				}
 				catch(e)
 				{
-					console.warn(e);		
+					this.logErr(e);	
 				}
 			})
 			.on('isShooting', (data)=>
 			{
 				try
 				{
-					this.entities[data.id]/*.weapon*/.shooting = Boolean(data.value);
+					this.entities[data.id].shooting = Boolean(data.value);
 				}
 				catch(e)
 				{
-					console.warn(e);		
+					this.logErr(e);	
 				}
 			})
 			;

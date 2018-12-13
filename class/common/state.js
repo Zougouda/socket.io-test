@@ -17,6 +17,12 @@ module.exports = class State
 		this.canvasHeight = 768;
 	}
 
+	logErr(msg)
+	{
+		if(console.warn && this.debug)
+			console.warn(msg);
+	}
+
 	addEntity(obj)
 	{
 		if(!obj.id)
