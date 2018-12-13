@@ -45,9 +45,6 @@ module.exports = class ClientState extends require('../common/state.js')
 		{
 			this.playerID = this.socket.io.engine.id;
 
-			//this.players[this.playerID] = new commonClasses.Player({id: this.playerID})
-			//.addTo(this);
-
 			this.playerEntersTheGame();
 
 		})
@@ -75,16 +72,6 @@ module.exports = class ClientState extends require('../common/state.js')
 			var newEntity = new constructorToUse(options) // create the object based on the data sent from the server
 			.addTo(this);
 		})
-		//.on('addShip', (obj)=>
-		//{
-		//	var newPlayerShip = new commonClasses.Ship(obj)
-		//	.addTo(this);
-		//})
-		//.on('addProjectile', (obj)=>
-		//{
-		//	var bullet = new commonClasses.Projectile(obj)
-		//	.addTo(this);
-		//})
 		.on('updateEntities', (changes)=>
 		{
 			this.handlePatch(changes);
@@ -100,7 +87,6 @@ module.exports = class ClientState extends require('../common/state.js')
 			localStorage.setItem('playerName', this.playerName);
 			this.socket.emit('newPlayerShip', {
 				name: this.playerName, 
-				//id: this.playerID,
 			});
 		}
 	}

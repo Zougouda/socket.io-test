@@ -31,14 +31,10 @@ module.exports = class ServerState extends require('../common/state.js')
 			/* retrieve every player and ship on connect */
 			Object.entries(this.entities).forEach( ([id, obj])=>
 			{
-				//if(id === playerShip.id)
-				//	return;
 				obj.emitAdd(socket); // send all others existing objects to client
 			});
 			Object.entries(this.players).forEach( ([id, obj])=>
 			{
-				//if(id === player.id)
-				//	return;
 				obj.emitAdd(socket); // send all others existing objects to client
 			});
 
@@ -67,17 +63,6 @@ module.exports = class ServerState extends require('../common/state.js')
 				if(playerShip)
 					playerShip.remove();
 			})
-			//.on('setAxisMovement', (data)=>
-			//{
-			//	try
-			//	{
-			//		this.entities[data.id].movement[data.axis] = Math.max(Math.min(data.value, 1), -1); // -1 >= movementValue =< 1
-			//	}
-			//	catch(e)
-			//	{
-			//		console.warn(e);		
-			//	}
-			//})
 			.on('thrustingDirection', (data)=>
 			{
 				try
@@ -134,11 +119,6 @@ module.exports = class ServerState extends require('../common/state.js')
 		{
 			return (
 				change.op === 'replace' // Only send replacements patches to all clients
-				// && (
-				// 	change.path.includes('/centerX') || change.path.includes('/centerY') // send X and Y
-				// 	|| change.path.includes('/lookAngle')
-				// 	|| change.path.includes('/HP')
-				// )
 			);
 		});
 

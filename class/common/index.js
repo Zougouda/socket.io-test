@@ -1,6 +1,4 @@
 module.exports = {
-	// Geometry: require('./geometry.js'),
-
 	Player: require('./player.js'),
 
 	Movable: require('./movable.js'),

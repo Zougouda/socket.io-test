@@ -56,19 +56,11 @@ class Geometry
 		var x2 = this.getXByAngleAndDistance(0, angle2, speed2);
 		var y2 = this.getYByAngleAndDistance(0, angle2, speed2);
 
-		//result vector
 		var xR = x1 + x2;
 		var yR = y1 + y2;
 
 		var speedR = this.getDistanceBy2XY(0, 0, xR, yR);
 		var angleR = this.getAngleBy2XY(0, 0, xR, yR);
-
-		//Hack to counter angle flooring START
-		// var angleDelta = this.getDeltaBetweenAngles(angle1, angle2);
-		//if destination angle if at the left
-		// if (angleDelta > 0)
-		// 	angleR++;
-		//Hack END
 
 		return {
 			speed: speedR,
@@ -103,12 +95,10 @@ class Geometry
 
 	static getXByAngle(angle)
 	{
-		// return Math.cos(angle % 360 * Math.PI / 180);
 		return this.static.COS[angle>>0];
 	}
 	static getYByAngle(angle)
 	{
-		// return Math.sin(angle % 360 * Math.PI / 180) * -1;
 		return this.static.SIN[angle>>0];
 	}
 

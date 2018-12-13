@@ -34,10 +34,6 @@ class Movable extends require('./entity.js')
 
 	init()
 	{
-		// var colors = ['red', 'blue', 'green', 'purple'];
-		// if(!this.color)
-		// 	this.color = colors[ Math.floor(Math.random() * colors.length) ];
-
 		this.maxSpeed = this.speed;
 
 		this.movement = {
@@ -70,17 +66,13 @@ class Movable extends require('./entity.js')
 
 	updateByMovement(modifier)
 	{
-		//this.centerX += this.movement.x * this.speed * modifier;
 		this.setCenterX( this.centerX + this.movement.x * this.speed * modifier );
-		//this.centerY += this.movement.y * this.speed * modifier;
 		this.setCenterY( this.centerY + this.movement.y * this.speed * modifier );
 	}
 
 	updateByAngleAndDistance(angle, distance)
 	{
-		//this.centerX += distance * this.constructor.Geometry.getXByAngle(angle);
 		this.setCenterX( this.centerX + distance * this.constructor.Geometry.getXByAngle(angle) );
-	    //this.centerY += distance * this.constructor.Geometry.getYByAngle(angle);
 		this.setCenterY( this.centerY + distance * this.constructor.Geometry.getYByAngle(angle) );
 	}
 
@@ -97,11 +89,6 @@ class Movable extends require('./entity.js')
 	moveByVector(modifier)
 	{
 		return this.updateByAngleAndDistance(this.moveVector.angle, this.moveVector.speed * modifier);
-	}
-
-	updateMoveVector(newVector)
-	{
-		
 	}
 
 	updateLookAngle(modifier, angleToReach)
@@ -136,8 +123,6 @@ class Movable extends require('./entity.js')
 		)
 			return;
 
-		//var centerX = (this.clientCoords.centerX || this.centerX), 
-		//	centerY = (this.clientCoords.centerY || this.centerY);
 		var angleBetweenMeAndMouse = this.constructor.Geometry.getAngleBy2XY(
 			this.clientCenterX, 
 			this.clientCenterY, 
@@ -205,7 +190,6 @@ class Movable extends require('./entity.js')
 		
 		this.clientCoords.centerX = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].centerX, this.centerX, modifier);
 		this.clientCoords.centerY = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].centerY, this.centerY, modifier);
-		// this.clientCoords.lookAngle = this.constructor.Geometry.lerp(this.serverUpdatesArray[1].lookAngle, this.lookAngle, modifier);
 	}
 
 	storeLastPosition()
