@@ -17,18 +17,18 @@ module.exports = class Graphic
         var scaleToFitY = gameHeight / canvas.height;
         var currentScreenRatio = gameWidth / gameHeight;
         var optimalRatio = Math.min(scaleToFitX, scaleToFitY);
-        if (currentScreenRatio >= 1.77 && currentScreenRatio <= 1.79) //if fullscreen
-        {
-            canvas.ratio = width / gameWidth;
-            canvas.style.width = gameWidth + "px";
-            canvas.style.height = gameHeight + "px";
-        }
-        else
-        {
+        //if (currentScreenRatio >= 1.77 && currentScreenRatio <= 1.79) //if fullscreen
+        //{
+        //    canvas.ratio = width / gameWidth;
+        //    canvas.style.width = gameWidth + "px";
+        //    canvas.style.height = gameHeight + "px";
+        //}
+        //else
+        //{
             canvas.ratio = width / (canvas.width * optimalRatio);
             canvas.style.width = canvas.width * optimalRatio + "px";
             canvas.style.height = canvas.height * optimalRatio + "px";
-        }
+        //}
 
         //Canvas at middle
         canvas.style.position = "absolute";
