@@ -7,15 +7,12 @@ module.exports = class Projectile extends require('./movable.js')
         return Object.assign(super.defaultOptions, {
 			groups: ['projectiles'],
 			
-			//spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/projectile/1.png',
 			spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/projectile/blue-beam.png',
 
             color: 'red',
 			damage: 0,
 			maxRange: 200,
 			owner: null,
-
-			//addEvent: 'addProjectile',
         });
     }
 
@@ -50,8 +47,11 @@ module.exports = class Projectile extends require('./movable.js')
 
 	checkForCollision()
 	{
+		var myOwner = this.getOwner();
 		Object.values( this.getState().groups['ships'] ).forEach((obj)=>
 		{
+			if(myOwner.id === obj.id) // don't damage your owner
+				return;
 			if(!Collision.checkCollisionBetween2rectangles(this, obj))
 				return;
 
