@@ -1,3 +1,5 @@
+const Player = require('./player.js');
+
 module.exports = class State
 {
 	constructor(options = {})
@@ -7,6 +9,7 @@ module.exports = class State
 
 		this.debug = options.debug || false;
 
+		this.players = {};
 		this.entities = {};
 		this.groups = {};
 
@@ -18,6 +21,13 @@ module.exports = class State
 	{
 		if(!obj.id)
 			obj.id = `${Date.now()}-${Math.ceil(Math.random()*100)}`; // random uniq-ish id
+
+		/* Handle player case  */
+		if(obj instanceof Player)
+		{
+			this.players[obj.id] = obj;
+			return;
+		}
 
 		this.entities[obj.id] = obj;
 
@@ -34,6 +44,13 @@ module.exports = class State
 
 	removeEntity(id)
 	{
+		/* Handle player case  */
+		if(this.players[id])
+		{
+			delete this.players[id];
+			return;
+		}
+
 		if(!this.entities[id])
 			return;
 

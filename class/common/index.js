@@ -1,5 +1,8 @@
 module.exports = {
 	// Geometry: require('./geometry.js'),
+
+	Player: require('./player.js'),
+
 	Movable: require('./movable.js'),
 	Ship: require('./ship.js'),
 	Weapon: require('./weapon.js'),

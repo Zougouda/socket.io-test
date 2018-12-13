@@ -25,26 +25,42 @@ module.exports = class ServerState extends require('../common/state.js')
 		this.io.on('connection', (socket)=>
 		{
 			var clientID = socket.client.id;
+			var player = null;
 			var playerShip = null;
 
-			socket
-			.on('newChallenger', (data)=>
+			/* retrieve every player and ship on connect */
+			Object.entries(this.entities).forEach( ([id, obj])=>
 			{
-				playerShip = new commonClasses.Ship({
-					id: clientID, 
-					name: data.name, 
-					centerX: Math.random() * (this.canvasWidth - 100) + 100,
-					centerY: Math.random() * (this.canvasHeight - 100) + 100,
-				})
-				.addTo(this, socket);
+				//if(id === playerShip.id)
+				//	return;
+				obj.emitAdd(socket); // send all others existing objects to client
+			});
+			Object.entries(this.players).forEach( ([id, obj])=>
+			{
+				//if(id === player.id)
+				//	return;
+				obj.emitAdd(socket); // send all others existing objects to client
+			});
 
-				Object.entries(this.entities).forEach( ([id, obj])=>
-				{
-					if(id === clientID)
-						return;
-
-					obj.emitAdd(socket); // send all others existing objects to client
+			socket
+			.on('newPlayerShip', (data)=>
+			{
+				player = new commonClasses.Player({
+					id: clientID,
+					name: data.name,
 				});
+
+				playerShip = new commonClasses.Ship({
+					name: data.name, 
+					centerX: Math.random() * (this.canvasWidth - 100) + 50,
+					centerY: Math.random() * (this.canvasHeight - 100) + 50,
+				});
+				playerShip.assignCrewMember(clientID, 'pilot');	
+				playerShip.addTo(this, socket);
+
+				player.shipID = playerShip.id;
+				player.addTo(this, socket);
+
 			})
 			.on('disconnect', ()=>
 			{

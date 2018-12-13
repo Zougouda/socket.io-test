@@ -44,12 +44,12 @@ module.exports = class ClientState extends require('../common/state.js')
 		.on('connect', ()=>
 		{
 			this.playerID = this.socket.io.engine.id;
-			this.playerName = window.prompt("What's your name ?", localStorage.getItem('playerName') || '');
-			if(!!this.playerName)
-			{
-				localStorage.setItem('playerName', this.playerName);
-				this.socket.emit('newChallenger', {name: this.playerName});
-			}
+
+			//this.players[this.playerID] = new commonClasses.Player({id: this.playerID})
+			//.addTo(this);
+
+			this.playerEntersTheGame();
+
 		})
 		.on('reset', ()=>
 		{
@@ -61,8 +61,10 @@ module.exports = class ClientState extends require('../common/state.js')
 				this.entities[id].remove();
 			if(this.isCurrentPlayer(id) )
 			{
-				/* reload after a friendly message */
-				alert("You're dead, bro.");
+				setTimeout(()=>
+				{
+					alert("You're dead, bro.");
+				}), 500;
 			}
 		})
 		.on('addEntity', (data)=>
@@ -88,6 +90,19 @@ module.exports = class ClientState extends require('../common/state.js')
 			this.handlePatch(changes);
 		})
 		;
+	}
+
+	playerEntersTheGame()
+	{
+		this.playerName = window.prompt("What's your name ?", localStorage.getItem('playerName') || '');
+		if(!!this.playerName)
+		{
+			localStorage.setItem('playerName', this.playerName);
+			this.socket.emit('newPlayerShip', {
+				name: this.playerName, 
+				//id: this.playerID,
+			});
+		}
 	}
 
 	isCurrentPlayer(id)

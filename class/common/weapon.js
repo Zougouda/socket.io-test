@@ -108,6 +108,7 @@ module.exports = class Weapon extends require('./movable.js')
                     }
                 )
             );
+			bullet.getOwner = ()=>{return myOwner;};
             bullet.addTo(myOwner.getState(), myOwner.getSocket());
         }
     }

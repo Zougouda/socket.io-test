@@ -8,6 +8,7 @@ module.exports = class Ship extends require('./movable.js')
 	{
 		return Object.assign(super.defaultOptions, {
 			groups: ['ships'],
+			playerCrew: {},
 
 			width: 42,
 			height: 60,
@@ -152,19 +153,6 @@ module.exports = class Ship extends require('./movable.js')
 		}
     }
 
-	onAdd()
-	{
-		/* client-side behaviour */
-		if(typeof window !== 'undefined')
-		{
-			if(this.getState() && this.getState().isCurrentPlayer(this.id) )
-			{
-				this.initKeyboardControl();
-				this.initMouseControl(this.getState().canvas);
-			}
-		}
-	}
-
     update(modifier)
     {
 		/* update moveVector */
@@ -261,6 +249,11 @@ module.exports = class Ship extends require('./movable.js')
 		if( this.HP <= 0)
 			this.remove();
 	}
+
+	assignCrewMember(playerID, assignment)
+	{
+		this.playerCrew[assignment] = playerID;
+	}
 	
 	equipWeapon(weapon)
 	{
@@ -272,6 +265,18 @@ module.exports = class Ship extends require('./movable.js')
 	{
 		this.reactors.push(reactor);
 		reactor.getOwner = ()=>{return this};
+	}
+
+	remove()
+	{
+		/* remove any player inside the ship */
+		Object.values(this.playerCrew).forEach( (playerID)=>
+		{
+			var player = this.getState().players[playerID];
+			if( player )
+				player.remove();
+		} );
+		super.remove();
 	}
 
     /********** CLIENT FUNCTIONS **********/
