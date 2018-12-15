@@ -55,67 +55,117 @@ module.exports = {
 		{
 			pilot: 
 			{
-				onMouseMove: 'turnShipByMouse',
-				onMouseDown: 'toggleWeaponsEvenOrOddByMouse',
-				onMouseUp: 'toggleWeaponsEvenOrOddByMouse',
+				onMouseMove: {
+					callback: 'turnShipByMouse',
+					params: {}
+				},
+				onMouseDown: {
+					callback: 'toggleWeapons',
+					params: {leftWeaponIDs: [0], rightWeaponIDs: [1]}
+				},
+				onMouseUp: {
+					callback: 'toggleWeapons',
+					params: {leftWeaponIDs: [0], rightWeaponIDs: [1]}
+				},
 			}
 		},
 		keyControlsByAssignment: 
 		{
 			pilot:
 			{
-				onKeyDown: 'moveByKeyDown',
-				onKeyUp: 'moveByKeyUp',				
+				onKeyDown: {
+					callback: 'moveByKeyDown',
+					params: {}
+				},
+				onKeyUp: {
+					callback: 'moveByKeyUp',
+					params: {}
+				}
 			}
 		},
 	},
 
-	baseShip_test: 
+	kestrel: 
 	{
-		width: 42,
-		height: 60,
+		width: 100,
+		height: 150,
 
 		speed: 400, // px/s
 		thrust: {
-			forward: 60,
-			backward: 20,
-			left: 10,
-			right: 10,
+			forward: 20,
+			backward: 10,
 		},
-		rotationSpeed: 540, // deg/s
+		rotationSpeed: 150, // deg/s
 
-		HP: 100, maxHP: 100,
-		spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/ship/spaceship.png',
+		HP: 5000, maxHP: 5000,
+		spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/ship/kestrel.png',
 
 		reactorOptions: [
 			{
-				distance: 30,
-				angle: 12,
+				distance: 70,
+				angle: 30,
 				particle: {
 					speed: 1,
 					duration: 150,
-					radius: 4,
+					radius: 10,
 				}
 			},
 			{
-				distance: 30,
-				angle: -12,
+				distance: 70,
+				angle: -30,
 				particle: {
 					speed: 1,
 					duration: 150,
-					radius: 4,
+					radius: 10,
 				}
 			},
 		],
 
 		weaponOptions: 
 		[
+			/* pilot guns */
 			Object.assign(
-				{ distance: 15, angle: 110, lookAngle: 180, onTop: true, }, 
+				{ 
+					distance: 75, 
+					angle: 10, 
+					lookAngle: 90, 
+					onTop: true,
+					parpticle: {
+						spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/projectile/red-beam.png',
+					}
+				 }, 
 				weaponConfig.baseWeapon
 			),
 			Object.assign(
-				{ distance: 15, angle: -110, lookAngle: 0, onTop: true, }, 
+				{ 
+					distance: 75, 
+					angle: -10, 
+					lookAngle: 90, 
+					onTop: true,
+					parpticle: {
+						spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/projectile/red-beam.png',
+					}
+				 }, 
+				weaponConfig.baseWeapon
+			),
+
+			/* gunner guns */
+			Object.assign(
+				{ 
+					distance: 15, 
+					angle: 90, 
+					lookAngle: 90, 
+					onTop: true,
+				 }, 
+				weaponConfig.baseWeapon
+			),
+			Object.assign(
+				{ 
+					distance: 15, 
+					angle: -90, 
+					lookAngle: 90, 
+					onTop: true,
+				 }, 
 				weaponConfig.baseWeapon
 			),
 		],
@@ -124,21 +174,47 @@ module.exports = {
 		{
 			pilot: 
 			{
-				onMouseMove: 'turnShipByMouse',
+				onMouseMove: {
+					callback: 'turnShipByMouse',
+					params: {}
+				},
+				onMouseDown: {
+					callback: 'toggleWeapons',
+					params: {leftWeaponIDs: [0], rightWeaponIDs: [1]}
+				},
+				onMouseUp: {
+					callback: 'toggleWeapons',
+					params: {leftWeaponIDs: [0], rightWeaponIDs: [1]}
+				},
 			},
 			gunner: 
 			{
-				onMouseMove: 'turnWeaponsByMouse',
-				onMouseDown: 'toggleWeaponsEvenOrOddByMouse',
-				onMouseUp: 'toggleWeaponsEvenOrOddByMouse',
+				onMouseMove: {
+					callback: 'turnWeaponsByMouse',
+					params: {weaponIDs: [2, 3]}
+				},
+				onMouseDown: {
+					callback: 'toggleWeapons',
+					params: {leftWeaponIDs: [2], rightWeaponIDs: [3]}
+				},
+				onMouseUp: {
+					callback: 'toggleWeapons',
+					params: {leftWeaponIDs: [2], rightWeaponIDs: [3]}
+				},
 			},
 		},
 		keyControlsByAssignment: 
 		{
 			pilot:
 			{
-				onKeyDown: 'moveByKeyDown',
-				onKeyUp: 'moveByKeyUp',				
+				onKeyDown: {
+					callback: 'moveByKeyDown',
+					params: {}
+				},
+				onKeyUp: {
+					callback: 'moveByKeyUp',
+					params: {}
+				}			
 			}
 		},
 	},

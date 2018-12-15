@@ -1,5 +1,6 @@
 module.exports = {
 	Player: require('./player.js'),
+	Control: require('./control.js'),
 
 	Movable: require('./movable.js'),
 	Ship: require('./ship.js'),

@@ -43,21 +43,43 @@ module.exports = class ServerState extends require('../common/state.js')
 					name: data.name,
 				});
 
-				playerShip = new commonClasses.Ship({
-					name: data.name, 
-					centerX: Math.random() * (this.canvasWidth - 100) + 50,
-					centerY: Math.random() * (this.canvasHeight - 100) + 50,
-				});
-				playerShip.assignCrewMember(clientID, 'pilot');	
-				playerShip.addTo(this, socket);
+				if(!data.shipID || !data.assignment) // New player
+				{
+					var shipKey = data.shipToPick || 'baseShip'; // you can choose a specific ship
 
-				player.shipID = playerShip.id;
-				player.addTo(this, socket);
+					var baseShipConfig = commonClasses.Ship.config[shipKey];
+					var shipFullOptions = Object.assign(
+						{
+							name: data.name,
+							centerX: Math.random() * (this.canvasWidth - 100) + 50,
+							centerY: Math.random() * (this.canvasHeight - 100) + 50,
+						},
+						baseShipConfig
+					);
+					playerShip = new commonClasses.Ship(shipFullOptions);
+					playerShip.assignCrewMember(clientID, 'pilot');	
+					playerShip.addTo(this, socket);
+					player.shipID = playerShip.id;
+				}
+				else // Joining another player's ship
+				{
+					playerShip = this.entities[data.shipID];
+					if(playerShip)
+					{
+						playerShip.assignCrewMember(clientID, data.assignment);
+						player.shipID = playerShip.id;
+					}
+				}
+
+				setTimeout(()=>
+				{
+					player.addTo(this, socket);
+				}, 100);
 
 			})
 			.on('disconnect', ()=>
 			{
-				if(playerShip)
+				if(playerShip && playerShip.playerCrew.pilot === clientID)
 					playerShip.remove();
 			})
 			.on('thrustingDirection', (data)=>
@@ -76,6 +98,23 @@ module.exports = class ServerState extends require('../common/state.js')
 				try
 				{
 					this.entities[data.id].lookPointCoords = {x: data.x, y: data.y};
+				}
+				catch(e)
+				{
+					this.logErr(e);	
+				}
+			})
+			.on('setWeaponsLookPointCoords', (data)=>
+			{
+				try
+				{
+					var ship = this.entities[data.id];
+					var weaponIDs = data.weaponIDs || Object.keys(ship.weapons);
+					weaponIDs.forEach( (weaponID)=>
+					{
+						var weapon = ship.weapons[weaponID];
+						weapon.lookPointCoords = {x: data.x, y: data.y};
+					} );
 				}
 				catch(e)
 				{
@@ -122,6 +161,7 @@ module.exports = class ServerState extends require('../common/state.js')
 		{
 			return (
 				change.op === 'replace' // Only send replacements patches to all clients
+				|| (change.op === 'add' && change.path.includes('playerCrew') )
 			);
 		});
 

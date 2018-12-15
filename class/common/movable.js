@@ -36,6 +36,8 @@ class Movable extends require('./entity.js')
 	{
 		this.maxSpeed = this.speed;
 
+        this.lookPointCoords = {};
+
 		this.movement = {
 			x: 0,
 			y: 0,

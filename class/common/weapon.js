@@ -1,7 +1,7 @@
 const Projectile = require('./projectile.js');
 const Geometry = require('./geometry.js');
 
-module.exports = class Weapon extends require('./movable.js')
+class Weapon extends require('./movable.js')
 {
     get defaultOptions()
     {
@@ -12,8 +12,10 @@ module.exports = class Weapon extends require('./movable.js')
 			angle: 0,
 
 			width: 4,
-			height: 24,
-			lookAngle: 90,
+            height: 24,
+            
+            lookAngle: 90,
+            rotationSpeed: 540,
 
 			onTop: false,
 
@@ -71,7 +73,10 @@ module.exports = class Weapon extends require('./movable.js')
 
     update(modifier)
     {
-		this.lookAngle = this.getOwner().lookAngle;
+        if(this.lookPointCoords.x && this.lookPointCoords.y)
+            this.turnToLookPointCoords(modifier);
+        else
+            this.lookAngle = this.getOwner().lookAngle;
 
         if(!this.shooting)
             return;
@@ -147,4 +152,8 @@ module.exports = class Weapon extends require('./movable.js')
 
 		super.draw(ctx, ctxOptions);
 	}
-};
+}
+
+Weapon.config = require('./config/weapon.js');
+
+module.exports = Weapon;

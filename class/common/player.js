@@ -66,16 +66,21 @@ class Player extends require('./entity.js')
 		if( typeof window !== 'undefined' && this.getState().isCurrentPlayer(this.id) )
 		{
 			var myShip = this.getShip();
+			console.log(myShip.id);
 			var myAssignment = this.getAssignment();
 
 			/* Assign every ship assignment controls to the player in charge */
-			Object.entries(myShip.getMouseControlsByAssignment()[myAssignment])
-			.concat( Object.entries(myShip.getKeyControlsByAssignment()[myAssignment]) )
-			.forEach( ([event, callback])=>
+			Object.entries(myShip.mouseControlsByAssignment[myAssignment] || [] )
+			.concat( Object.entries(myShip.keyControlsByAssignment[myAssignment] || []) )
+			.forEach( ([event, obj])=>
 			{
+				if(!obj.callback)
+					return;
+
 				this[event] = (e)=>
 				{
-					callback.apply(myShip, [e]);
+					commonClasses.Control[obj.callback]
+					.apply(this, [e, obj.params]);
 				};
 			} );
 

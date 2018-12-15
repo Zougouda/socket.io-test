@@ -1,8 +1,9 @@
 const Weapon = require('./weapon.js');
 const Reactor = require('../client/reactor.js');
 const Collision = require('./collision.js');
+const Control = require('./control.js');
 
-module.exports = class Ship extends require('./movable.js')
+class Ship extends require('./movable.js')
 {
     get defaultOptions()
 	{
@@ -17,13 +18,13 @@ module.exports = class Ship extends require('./movable.js')
 			thrust: {
 				forward: 60,
 				backward: 20,
-				left: 20,
-				right: 20,
 			},
 			rotationSpeed: 540, // deg/s
 
 			lookAngle: 90, // looking straight up : default angle
-			HP: 100,
+
+			maxHP: 100, HP: 100,
+
 			spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/ship/spaceship.png',
 
 			name: '',
@@ -89,42 +90,24 @@ module.exports = class Ship extends require('./movable.js')
 				},
 			],
 
-			getMouseControlsByAssignment: ()=>
+			mouseControlsByAssignment: 
 			{
-				return {
-					pilot: 
-					{
-						onMouseMove: (e)=>
-						{
-							this.setLookPoint(e);
-						},
-						onMouseDown: (e)=>
-						{
-							if(e.which === 1) // left mouse button
-								this.toggleWeapons([0]);
-							else if(e.which === 3) // right mouse button
-								this.toggleWeapons([1]);
-						},
-					}
-				};
+				pilot: 
+				{
+					onMouseMove: null,
+					onMouseDown: null,
+					onMouseUp: null,
+				}
+			},
+			keyControlsByAssignment: 
+			{
+				pilot:
+				{
+					onKeyDown: null,
+					onKeyUp: null,				
+				}
 			},
 
-			getKeyControlsByAssignment: ()=>
-			{
-				return {
-					pilot: 
-					{
-						onKeyDown: (e)=>
-						{
-							this.setThrustByKeyDown(e);
-						},
-						onKeyUp: (e)=>
-						{
-							this.setThrustByKeyUp(e);
-						},
-					}
-				};
-			},
 		});
 	}
 
@@ -153,9 +136,8 @@ module.exports = class Ship extends require('./movable.js')
     {
         super.init();
 
-        this.lookPointCoords = {};
-
-		this.maxHP = this.HP;
+		if(!this.maxHP)
+			this.maxHP = this.HP;
 
 		/* TODO better */
 		this.thrusting = {
@@ -479,12 +461,22 @@ module.exports = class Ship extends require('./movable.js')
 
 	setLookPoint(e)
 	{
-		var rect = this.getState().canvas.getBoundingClientRect();
-		var x = (e.pageX - rect.left) * e.target.ratio,
-			y = (e.pageY - rect.top) * e.target.ratio;
+		var {x, y} = Control.getMouseCoords(e);
 
 		this.getState().socket.emit('setLookPointCoords', {
 			id: this.id,
+			x,
+			y,
+		});
+	}
+
+	setWeaponsLookPoint(e, weaponIDs = null)
+	{
+		var {x, y} = Control.getMouseCoords(e);
+
+		this.getState().socket.emit('setWeaponsLookPointCoords', {
+			id: this.id,
+			weaponIDs,
 			x,
 			y,
 		});
@@ -518,4 +510,8 @@ module.exports = class Ship extends require('./movable.js')
 		if(valueAfterAdd >= -1 && valueAfterAdd <= 1 )
 			this.setAxisMovement(axis, valueAfterAdd)
 	}
-};
+}
+
+Ship.config = require('./config/ship.js');
+
+module.exports =  Ship;

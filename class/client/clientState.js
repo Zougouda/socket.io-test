@@ -46,7 +46,6 @@ module.exports = class ClientState extends require('../common/state.js')
 			this.playerID = this.socket.io.engine.id;
 
 			this.playerEntersTheGame();
-
 		})
 		.on('reset', ()=>
 		{
@@ -84,9 +83,18 @@ module.exports = class ClientState extends require('../common/state.js')
 		this.playerName = window.prompt("What's your name ?", localStorage.getItem('playerName') || '');
 		if(!!this.playerName)
 		{
+			/* player can join an existing ship with a get parameter */
+			var urlParams = new URLSearchParams(window.location.search);
+			var shipToPick = urlParams.get('ship') || null;
+			var assignment = urlParams.get('assignment') || null;
+			var shipIdToJoin = urlParams.get('shipID') || null;
+
 			localStorage.setItem('playerName', this.playerName);
 			this.socket.emit('newPlayerShip', {
 				name: this.playerName, 
+				shipToPick,
+				shipID: shipIdToJoin,
+				assignment,
 			});
 		}
 	}
@@ -117,13 +125,13 @@ module.exports = class ClientState extends require('../common/state.js')
 		{
 			obj.storeLastPosition();
 		} );
-		try
-		{
+		// try
+		// {
 			this.jsonPatch.applyPatch(this.entities, changes);
-		}
-		catch(e)
-		{
-			 this.logErr(e);
-		}
+		// }
+		// catch(e)
+		// {
+		// 	 this.logErr(e);
+		// }
 	}
 }
