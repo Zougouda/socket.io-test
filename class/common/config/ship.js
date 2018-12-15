@@ -124,50 +124,50 @@ module.exports = {
 		weaponOptions: 
 		[
 			/* pilot guns */
-			Object.assign(
-				{ 
-					distance: 75, 
-					angle: 10, 
-					lookAngle: 90, 
-					onTop: true,
-					parpticle: {
-						spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/projectile/red-beam.png',
-					}
-				 }, 
-				weaponConfig.baseWeapon
-			),
-			Object.assign(
-				{ 
-					distance: 75, 
-					angle: -10, 
-					lookAngle: 90, 
-					onTop: true,
-					parpticle: {
-						spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/projectile/red-beam.png',
-					}
-				 }, 
-				weaponConfig.baseWeapon
-			),
+			{
+				...weaponConfig.baseWeapon,
+				distance: 75, 
+				angle: 10, 
+				lookAngle: 90, 
+				projectile: {
+					...weaponConfig.baseWeapon.projectile,
+				}
+			},
+			{
+				...weaponConfig.baseWeapon,
+				distance: 75, 
+				angle: -10, 
+				lookAngle: 90, 
+				projectile: {
+					...weaponConfig.baseWeapon.projectile,
+				}
+			},
 
 			/* gunner guns */
-			Object.assign(
-				{ 
-					distance: 15, 
-					angle: 90, 
-					lookAngle: 90, 
-					onTop: true,
-				 }, 
-				weaponConfig.baseWeapon
-			),
-			Object.assign(
-				{ 
-					distance: 15, 
-					angle: -90, 
-					lookAngle: 90, 
-					onTop: true,
-				 }, 
-				weaponConfig.baseWeapon
-			),
+			{
+				...weaponConfig.baseWeapon,
+				distance: 15, 
+				angle: 90, 
+				lookAngle: 90, 
+				onTop: true,
+				projectile: {
+					...weaponConfig.baseWeapon.projectile,
+					spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/projectile/red-beam.png',
+					height: 24
+				}
+			},
+			{
+				...weaponConfig.baseWeapon,
+				distance: 15, 
+				angle: -90, 
+				lookAngle: 90, 
+				onTop: true,
+				projectile: {
+					...weaponConfig.baseWeapon.projectile,
+					spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/projectile/red-beam.png',
+					height: 24
+				}
+			},
 		],
 
 		mouseControlsByAssignment: 
