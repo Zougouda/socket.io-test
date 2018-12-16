@@ -169,6 +169,7 @@ module.exports = {
 				distance: 15, 
 				angle: 90, 
 				onTop: true,
+				hasPointer: true,
 				projectile: {
 					...weaponConfig.baseWeapon.projectile,
 					spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/projectile/red-beam.png',
@@ -180,6 +181,7 @@ module.exports = {
 				distance: 15, 
 				angle: -90, 
 				onTop: true,
+				hasPointer: true,
 				projectile: {
 					...weaponConfig.baseWeapon.projectile,
 					spriteSrc: 'http://cyrilannette.fr/demos/supinspace/2/play/img/projectile/red-beam.png',

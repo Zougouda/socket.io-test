@@ -18,7 +18,8 @@ class Weapon extends require('./movable.js')
             relativeLookAngle: null,
             rotationSpeed: 540,
 
-			onTop: false,
+            onTop: false,
+            hasPointer: false,
 
             cooldown: 100,
             projectileNb: 1,
@@ -153,8 +154,57 @@ class Weapon extends require('./movable.js')
 		if(!this.onTop)
 			ctxOptions.globalCompositeOperation = 'destination-over';
 
-		super.draw(ctx, ctxOptions);
-	}
+        super.draw(ctx, ctxOptions);
+
+        this.drawLaserPointer(ctx);
+    }
+    
+    drawLaserPointer(ctx)
+    {
+        if(!this.hasPointer)
+            return false;
+        var drawPointer = false;
+        Object.values(this.getOwner().playerCrew).forEach( (playerID)=>
+        {
+            if(drawPointer)
+                return;
+            if( clientState.isCurrentPlayer( playerID ) )
+                drawPointer = true;
+        } );
+        if(!drawPointer)
+            return;
+
+        var startX = Geometry.getXByAngleAndDistance(
+            this.clientCenterX, 
+            this.lookAngle, 
+            this.height / 2
+        );
+        var startY= Geometry.getYByAngleAndDistance(
+            this.clientCenterY, 
+            this.lookAngle, 
+            this.height / 2
+        );
+        var endX = Geometry.getXByAngleAndDistance(
+            startX, 
+            this.lookAngle, 
+            this.projectile.maxRange
+        );
+        var endY = Geometry.getYByAngleAndDistance(
+            startY, 
+            this.lookAngle, 
+            this.projectile.maxRange
+        );
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.strokeStyle = 'red';
+        ctx.globalAlpha = 0.3;
+        ctx.lineWidth = 1;
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+        ctx.restore();
+    }
 }
 
 Weapon.config = require('./config/weapon.js');
