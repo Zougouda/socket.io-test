@@ -14,7 +14,8 @@ class Weapon extends require('./movable.js')
 			width: 4,
             height: 24,
             
-            lookAngle: 90,
+            lookAngle: null,
+            relativeLookAngle: null,
             rotationSpeed: 540,
 
 			onTop: false,
@@ -73,9 +74,11 @@ class Weapon extends require('./movable.js')
 
     update(modifier)
     {
-        if(this.lookPointCoords.x && this.lookPointCoords.y)
+        if(this.lookPointCoords.x && this.lookPointCoords.y) // following a mouse
             this.turnToLookPointCoords(modifier);
-        else
+        else if(this.relativeLookAngle) // has a fixed angle
+            this.lookAngle = Geometry.normalizeAngle( this.getOwner().lookAngle + this.relativeLookAngle );
+        else // follow the ship's angle
             this.lookAngle = this.getOwner().lookAngle;
 
         if(!this.shooting)

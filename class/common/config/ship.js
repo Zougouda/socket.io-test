@@ -124,20 +124,40 @@ module.exports = {
 		weaponOptions: 
 		[
 			/* pilot guns */
+			/* left */
 			{
 				...weaponConfig.baseWeapon,
-				distance: 75, 
-				angle: 10, 
-				lookAngle: 90, 
+				distance: 50, 
+				angle: 25, 
+				relativeLookAngle: 90,
 				projectile: {
 					...weaponConfig.baseWeapon.projectile,
 				}
 			},
 			{
 				...weaponConfig.baseWeapon,
-				distance: 75, 
-				angle: -10, 
-				lookAngle: 90, 
+				distance: 40, 
+				angle: 40, 
+				relativeLookAngle: 90,
+				projectile: {
+					...weaponConfig.baseWeapon.projectile,
+				}
+			},
+			/* right */
+			{
+				...weaponConfig.baseWeapon,
+				distance: 50, 
+				angle: -25, 
+				relativeLookAngle: -90,
+				projectile: {
+					...weaponConfig.baseWeapon.projectile,
+				}
+			},
+			{
+				...weaponConfig.baseWeapon,
+				distance: 40, 
+				angle: -40, 
+				relativeLookAngle: -90,
 				projectile: {
 					...weaponConfig.baseWeapon.projectile,
 				}
@@ -148,7 +168,6 @@ module.exports = {
 				...weaponConfig.baseWeapon,
 				distance: 15, 
 				angle: 90, 
-				lookAngle: 90, 
 				onTop: true,
 				projectile: {
 					...weaponConfig.baseWeapon.projectile,
@@ -160,7 +179,6 @@ module.exports = {
 				...weaponConfig.baseWeapon,
 				distance: 15, 
 				angle: -90, 
-				lookAngle: 90, 
 				onTop: true,
 				projectile: {
 					...weaponConfig.baseWeapon.projectile,
@@ -180,26 +198,26 @@ module.exports = {
 				},
 				onMouseDown: {
 					callback: 'toggleWeapons',
-					params: {leftWeaponIDs: [0], rightWeaponIDs: [1]}
+					params: {leftWeaponIDs: [0, 1], rightWeaponIDs: [2, 3]}
 				},
 				onMouseUp: {
 					callback: 'toggleWeapons',
-					params: {leftWeaponIDs: [0], rightWeaponIDs: [1]}
+					params: {leftWeaponIDs: [0, 1], rightWeaponIDs: [2, 3]}
 				},
 			},
 			gunner: 
 			{
 				onMouseMove: {
 					callback: 'turnWeaponsByMouse',
-					params: {weaponIDs: [2, 3]}
+					params: {weaponIDs: [4, 5]}
 				},
 				onMouseDown: {
 					callback: 'toggleWeapons',
-					params: {leftWeaponIDs: [2], rightWeaponIDs: [3]}
+					params: {leftWeaponIDs: [4], rightWeaponIDs: [5]}
 				},
 				onMouseUp: {
 					callback: 'toggleWeapons',
-					params: {leftWeaponIDs: [2], rightWeaponIDs: [3]}
+					params: {leftWeaponIDs: [4], rightWeaponIDs: [5]}
 				},
 			},
 		},
