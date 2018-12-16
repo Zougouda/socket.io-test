@@ -176,37 +176,35 @@ class Ship extends require('./movable.js')
 		Object.entries(this.thrusting)
 		.forEach(([direction, value])=>
 		{
-			if(value)
-			{
-				var angleToApply;
-				var speedToApply = this.thrust[direction];
-				switch(direction)
-				{
-					case 'forward':
-						angleToApply = this.lookAngle;
-					break;
-					case 'backward':
-						angleToApply = this.constructor.Geometry.getReverseAngle(this.moveVector.angle);
-					break;
-					case 'right':
-						angleToApply = this.lookAngle - 90;
-						if( angleToApply < 0)
-							angleToApply += 360;
-						//console.log('left', angleToApply);
-					break;
-					case 'left': 
-						angleToApply = (this.lookAngle + 90) % 360;
-						//console.log('right', angleToApply);
-					break;
-				}
+			if(!value)
+				return;
 
-				this.moveVector = this.constructor.Geometry.sum2vectors(
-					this.moveVector.angle, 
-					this.moveVector.speed, 
-					angleToApply, 
-					speedToApply
-				);
+			var angleToApply;
+			var speedToApply = this.thrust[direction];
+			switch(direction)
+			{
+				case 'forward':
+					angleToApply = this.lookAngle;
+				break;
+				case 'backward':
+					angleToApply = this.constructor.Geometry.getReverseAngle(this.moveVector.angle);
+				break;
+				case 'right':
+					angleToApply = this.lookAngle - 90;
+					if( angleToApply < 0)
+						angleToApply += 360;
+				break;
+				case 'left': 
+					angleToApply = (this.lookAngle + 90) % 360;
+				break;
 			}
+
+			this.moveVector = this.constructor.Geometry.sum2vectors(
+				this.moveVector.angle, 
+				this.moveVector.speed, 
+				angleToApply, 
+				speedToApply
+			);
 		});
 		this.moveVector.speed = Math.max(0, Math.min(this.moveVector.speed, this.maxSpeed ) );
 

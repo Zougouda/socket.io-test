@@ -94,6 +94,8 @@ module.exports = {
 		thrust: {
 			forward: 20,
 			backward: 10,
+			left: 0,
+			right: 0,
 		},
 		rotationSpeed: 150, // deg/s
 
@@ -168,6 +170,7 @@ module.exports = {
 				...weaponConfig.baseWeapon,
 				distance: 15, 
 				angle: 90, 
+				rotationSpeed: 720,
 				onTop: true,
 				hasPointer: true,
 				projectile: {
@@ -180,6 +183,7 @@ module.exports = {
 				...weaponConfig.baseWeapon,
 				distance: 15, 
 				angle: -90, 
+				rotationSpeed: 720,
 				onTop: true,
 				hasPointer: true,
 				projectile: {
