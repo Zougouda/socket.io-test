@@ -265,9 +265,12 @@ class Ship extends require('./movable.js')
 			this.remove();
 	}
 
-	assignCrewMember(playerID, assignment)
+	assignCrewMember(player, assignment)
 	{
-		this.playerCrew[assignment] = playerID;
+		this.playerCrew[assignment] = player.id;
+		if(this.name)
+			this.name += ' & ';
+		this.name += player.name;
 	}
 	
 	equipWeapon(weapon)
@@ -319,7 +322,7 @@ class Ship extends require('./movable.js')
 			return (this.length > n) ? this.substr(0, n-1) + '...' : this;
 	    };
 
-		return this.name.trunc( 16 );
+		return this.name.trunc( 32 );
 	}
 
 	draw(ctx)

@@ -50,27 +50,24 @@ module.exports = class ServerState extends require('../common/state.js')
 					var baseShipConfig = commonClasses.Ship.config[shipKey];
 					var shipFullOptions = Object.assign(
 						{
-							name: data.name,
 							centerX: Math.random() * (this.canvasWidth - 100) + 50,
 							centerY: Math.random() * (this.canvasHeight - 100) + 50,
 						},
 						baseShipConfig
 					);
 					playerShip = new commonClasses.Ship(shipFullOptions);
-					playerShip.assignCrewMember(clientID, 'pilot');	
+					playerShip.assignCrewMember(player, 'pilot');	
 					playerShip.addTo(this, socket);
-					player.shipID = playerShip.id;
 				}
 				else // Joining another player's ship
 				{
 					playerShip = this.entities[data.shipID];
 					if(playerShip)
-					{
-						playerShip.assignCrewMember(clientID, data.assignment);
-						player.shipID = playerShip.id;
-					}
+						playerShip.assignCrewMember(player, data.assignment);
 				}
 
+				if(playerShip)
+					player.shipID = playerShip.id;
 				setTimeout(()=>
 				{
 					player.addTo(this, socket);

@@ -96,6 +96,17 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
+/***/ "./class/client/camera.js":
+/*!********************************!*\
+  !*** ./class/client/camera.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = class Camera\r\n{\r\n    constructor()\r\n    {\r\n        this.init();\r\n    }\r\n\r\n    init()\r\n    {\r\n        this.centerX = clientState.canvasWidth / 2;\r\n        this.centerY = clientState.canvasHeight / 2;\r\n        this.width = clientState.canvasWidth;\r\n        this.height = clientState.canvasHeight;\r\n    }\r\n\r\n    update(modifier)\r\n    {\r\n        // TODO\r\n    }\r\n\r\n    attachTo(target)\r\n    {\r\n        this.tagetLock = target;\r\n        // TODO\r\n    }\r\n\r\n    detach()\r\n    {\r\n         // TODO\r\n    }\r\n}\n\n//# sourceURL=webpack://%5Bname%5D/./class/client/camera.js?");
+
+/***/ }),
+
 /***/ "./class/client/graphic.js":
 /*!*********************************!*\
   !*** ./class/client/graphic.js ***!
@@ -114,7 +125,7 @@ eval("module.exports = class Graphic\n{\n\tstatic resizeCanvas(options)\n    {\n
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("module.exports = {\r\n    Graphic: __webpack_require__(/*! ./graphic.js */ \"./class/client/graphic.js\"),\r\n    Particle: __webpack_require__(/*! ./particle.js */ \"./class/client/particle.js\"),\r\n};\n\n//# sourceURL=webpack://%5Bname%5D/./class/client/index.js?");
+eval("module.exports = {\r\n    Camera: __webpack_require__(/*! ./camera.js */ \"./class/client/camera.js\"),\r\n    Graphic: __webpack_require__(/*! ./graphic.js */ \"./class/client/graphic.js\"),\r\n    Particle: __webpack_require__(/*! ./particle.js */ \"./class/client/particle.js\"),\r\n};\n\n//# sourceURL=webpack://%5Bname%5D/./class/client/index.js?");
 
 /***/ }),
 
