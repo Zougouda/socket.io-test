@@ -199,6 +199,8 @@ class Ship extends require('./movable.js')
 				break;
 			}
 
+			var angleBeforeUpdate = this.moveVector.angle;
+
 			this.moveVector = this.constructor.Geometry.sum2vectors(
 				this.moveVector.angle, 
 				this.moveVector.speed, 
@@ -211,7 +213,7 @@ class Ship extends require('./movable.js')
         //super.update(modifier);
 		this.moveByVector(modifier);
 
-		this.moveVector.speed = Math.max(0, this.moveVector.speed -3); // moveVector decay
+		this.moveVector.speed = Math.max(0, this.moveVector.speed - modifier * this.constructor.speedDecayPerSecond); // moveVector decay
 
 		this.turnToLookPointCoords(modifier);
 		
@@ -512,6 +514,8 @@ class Ship extends require('./movable.js')
 			this.setAxisMovement(axis, valueAfterAdd)
 	}
 }
+
+Ship.speedDecayPerSecond = 160;
 
 Ship.config = require('./config/ship.js');
 
