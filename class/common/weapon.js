@@ -14,7 +14,7 @@ class Weapon extends require('./movable.js')
 			width: 4,
             height: 24,
             
-            lookAngle: null,
+            lookAngle: 90,
             relativeLookAngle: null,
             rotationSpeed: 540,
 
