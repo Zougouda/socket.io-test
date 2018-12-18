@@ -18,6 +18,8 @@ class Ship extends require('./movable.js')
 			thrust: {
 				forward: 60,
 				backward: 20,
+				left: 0,
+				right: 0,
 			},
 			rotationSpeed: 540, // deg/s
 
@@ -29,85 +31,11 @@ class Ship extends require('./movable.js')
 
 			name: '',
 
-			reactorOptions: [
-				{
-					distance: 30,
-					angle: 12,
-					cooldown: 15,
-					particle: {
-						speed: 1,
-						duration: 150,
-						radius: 4,
-					}
-				},
-				{
-					distance: 30,
-					angle: -12,
-					cooldown: 15,
-					particle: {
-						speed: 1,
-						duration: 150,
-						radius: 4,
-					}
-				},
-			],
+			reactorOptions: [],
+			weaponOptions: [],
 
-			weaponOptions: 
-			[
-				{
-					projectile: {
-						width: 4, 
-						height: 16, 
-						speed: 1200,
-						damage: 10,
-						maxRange: 600,
-					},
-					cooldown: 100,
-
-					distance: 15,
-					angle: 110,
-
-					width: 4,
-					height: 24,
-					lookAngle: 90,
-				},				
-				{
-					projectile: {
-						width: 4, 
-						height: 16, 
-						speed: 1200,
-						damage: 10,
-						maxRange: 600,
-					},
-					cooldown: 100,
-
-					distance: 15,
-					angle: -110,
-
-					width: 4,
-					height: 24,
-					lookAngle: 90,
-				},
-			],
-
-			mouseControlsByAssignment: 
-			{
-				pilot: 
-				{
-					onMouseMove: null,
-					onMouseDown: null,
-					onMouseUp: null,
-				}
-			},
-			keyControlsByAssignment: 
-			{
-				pilot:
-				{
-					onKeyDown: null,
-					onKeyUp: null,				
-				}
-			},
-
+			mouseControlsByAssignment: {},
+			keyControlsByAssignment: {},
 		});
 	}
 

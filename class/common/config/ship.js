@@ -10,8 +10,8 @@ module.exports = {
 		thrust: {
 			forward: 60,
 			backward: 20,
-			left: 10,
-			right: 10,
+			left: 20,
+			right: 20,
 		},
 		rotationSpeed: 540, // deg/s
 
