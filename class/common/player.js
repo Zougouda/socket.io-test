@@ -65,7 +65,11 @@ class Player extends require('./entity.js')
 	{
 		if( typeof window !== 'undefined' && this.getState().isCurrentPlayer(this.id) )
 		{
+			this.getState().currentPlayer = this;
+
 			var myShip = this.getShip();
+			if(!myShip)
+				return;
 			console.log(myShip.id);
 			var myAssignment = this.getAssignment();
 
@@ -85,6 +89,10 @@ class Player extends require('./entity.js')
 			} );
 
 			this.giveControls( this.getState().canvas );
+
+			/* Attach the camera to the ship */
+			this.camera = new clientClasses.Camera();
+			this.camera.attachTo(myShip);
 		}
 	}
 }

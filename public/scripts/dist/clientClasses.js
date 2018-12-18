@@ -103,7 +103,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("module.exports = class Camera\r\n{\r\n    constructor()\r\n    {\r\n        this.init();\r\n    }\r\n\r\n    init()\r\n    {\r\n        this.centerX = clientState.canvasWidth / 2;\r\n        this.centerY = clientState.canvasHeight / 2;\r\n        this.width = clientState.canvasWidth;\r\n        this.height = clientState.canvasHeight;\r\n    }\r\n\r\n    update(modifier)\r\n    {\r\n        // TODO\r\n    }\r\n\r\n    attachTo(target)\r\n    {\r\n        this.tagetLock = target;\r\n        // TODO\r\n    }\r\n\r\n    detach()\r\n    {\r\n         // TODO\r\n    }\r\n}\n\n//# sourceURL=webpack://%5Bname%5D/./class/client/camera.js?");
+eval("module.exports = class Camera\r\n{\r\n    constructor()\r\n    {\r\n        this.init();\r\n    }\r\n\r\n    init()\r\n    {\r\n        this.centerX = window.clientState.canvasWidth / 2;\r\n        this.centerY = window.clientState.canvasHeight / 2;\r\n        this.width = window.clientState.canvasWidth;\r\n        this.height = window.clientState.canvasHeight;\r\n    }\r\n\r\n    update(modifier)\r\n    {\r\n\t\tthis.centerX = targetlock.centerX;\r\n\t\tthis.centerY = targetLock.centerY;\r\n    }\r\n\r\n    attachTo(target)\r\n    {\r\n        this.tagetLock = target;\r\n        // TODO\r\n    }\r\n\r\n    detach()\r\n    {\r\n         // TODO\r\n    }\r\n}\r\n\n\n//# sourceURL=webpack://%5Bname%5D/./class/client/camera.js?");
 
 /***/ }),
 

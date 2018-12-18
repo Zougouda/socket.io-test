@@ -1,4 +1,5 @@
-const commonClasses = require('../common/index.js');
+const commonClasses = require('../common/');
+const clientClasses = require('../client/');
 
 module.exports = class ClientState extends require('../common/state.js')
 {
@@ -18,6 +19,7 @@ module.exports = class ClientState extends require('../common/state.js')
 		this.initCanvas(); // setup canvas(es)
 		this.tick(); // Start ticking 
 		this.initSocket(); // Start listening from the server
+
 	}
 
 	initCanvas()
@@ -113,6 +115,8 @@ module.exports = class ClientState extends require('../common/state.js')
 			obj.updateClient(secondsElapsed)
     	    obj.draw(this.ctx);
     	});
+		if( this.currentPlayer && this.currentPlayer.camera )
+			this.currentPlayer.camera.update(secondsElapsed); // move the camera
     	window.requestAnimationFrame(()=>
 		{
 			this.tick();
