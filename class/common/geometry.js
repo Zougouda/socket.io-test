@@ -1,5 +1,12 @@
 class Geometry
 {
+	static randomInArray(array)
+	{
+		if (array.length === 0)
+			return false;
+		return array[(Math.random() * array.length) >> 0];
+	}
+
 	static normalizeAngle(angle)
 	{
 		while(angle < 0)

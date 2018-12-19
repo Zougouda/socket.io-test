@@ -5,6 +5,7 @@ module.exports = class Particle extends require('../common/movable.js')
         return Object.assign(super.defaultOptions, {
             duration: 100,
             radius: 30,
+			moveAngleVariation: 0,
             startColor: [255, 0, 0],
             endColor: [255, 255, 0],
         });
@@ -18,6 +19,14 @@ module.exports = class Particle extends require('../common/movable.js')
         this.startRadius = this.radius;
         this.remainingLifeRatio = 1;
         this.opacity = 1;
+
+		if(this.moveAngleVariation)
+		{
+			var Geometry = this.constructor.Geometry;
+			this.moveAngle = Geometry.normalizeAngle(
+				this.moveAngle + this.moveAngleVariation * Math.random() * Geometry.randomInArray([-1, 1]) >> 0
+			);	
+		}
     }
 
     updateClient(modifier)
