@@ -15,8 +15,11 @@ module.exports = class Camera
 
     update(modifier)
     {
-		this.centerX = targetlock.centerX;
-		this.centerY = targetLock.centerY;
+		if(!this.targetLock)
+			return;
+
+		this.centerX = this.targetLock.centerX;
+		this.centerY = this.targetLock.centerY;
     }
 
     attachTo(target)
@@ -27,6 +30,7 @@ module.exports = class Camera
 
     detach()
     {
+		this.tagetLock = null;
          // TODO
     }
 }
