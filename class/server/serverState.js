@@ -43,9 +43,9 @@ module.exports = class ServerState extends require('../common/state.js')
 					name: data.name,
 				});
 
-				if(!data.shipID || !data.assignment) // New player
+				var addNewPlayerShip = ( shipKey )=>
 				{
-					var shipKey = data.shipToPick || 'baseShip'; // you can choose a specific ship
+					var shipKey = shipKey || 'baseShip'; // you can choose a specific ship
 
 					var baseShipConfig = commonClasses.Ship.config[shipKey];
 					var shipFullOptions = Object.assign(
@@ -58,16 +58,25 @@ module.exports = class ServerState extends require('../common/state.js')
 					playerShip = new commonClasses.Ship(shipFullOptions);
 					playerShip.assignCrewMember(player, 'pilot');	
 					playerShip.addTo(this, socket);
-				}
-				else // Joining another player's ship
+				};
+				var addPlayerToExistingShip = ( existingShipID, assignment )=>
 				{
-					playerShip = this.entities[data.shipID];
-					if(playerShip)
-						playerShip.assignCrewMember(player, data.assignment);
-				}
+					if(!existingShipID || !assignment)
+						return false;
+					if(!this.entities[existingShipID])
+						return false;
 
+					playerShip = this.entities[existingShipID];
+					playerShip.assignCrewMember(player, assignment);
+					return true;
+				};
+
+				var addedPlayerToShip = addPlayerToExistingShip(data.shipID, data.assignment); // try to join another player's ship
+				if(!addedPlayerToShip)
+					addNewPlayerShip(data.shipToPick); // new player
 				if(playerShip)
 					player.shipID = playerShip.id;
+
 				setTimeout(()=>
 				{
 					player.addTo(this, socket);

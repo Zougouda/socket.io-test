@@ -198,6 +198,7 @@ class Ship extends require('./movable.js')
 	assignCrewMember(player, assignment)
 	{
 		this.playerCrew[assignment] = player.id;
+		//player.shipID = this.id;
 		if(this.name)
 			this.name += ' & ';
 		this.name += player.name;
