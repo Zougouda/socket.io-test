@@ -129,13 +129,13 @@ module.exports = class ClientState extends require('../common/state.js')
 		{
 			obj.storeLastPosition();
 		} );
-		// try
-		// {
+		 try
+		 {
 			this.jsonPatch.applyPatch(this.entities, changes);
-		// }
-		// catch(e)
-		// {
-		// 	 this.logErr(e);
-		// }
+		 }
+		 catch(e)
+		 {
+		 	 this.logErr(e);
+		 }
 	}
 }
