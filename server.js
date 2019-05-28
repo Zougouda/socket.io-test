@@ -5,7 +5,7 @@ const pug = require('pug');
 
 const ServerState = require('./class/server/serverState.js');
 
-const port = Number(process.env.PORT || 7777);
+const port = Number(process.env.PORT || 30077);
 
 const app = express();
 app.get('/', (req, res)=>
